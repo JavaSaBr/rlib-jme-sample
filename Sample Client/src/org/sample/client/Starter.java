@@ -3,18 +3,20 @@ package org.sample.client;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 /**
- * Created by ronn on 23.01.16.
+ * Запускатор клиента.
+ *
+ * @author Ronn
  */
 public class Starter extends Application {
 
-    public static void main(String[] args) {
-        final SampleGame game = new SampleGame();
-        game.start();
+    public static void main(String[] args) throws IOException {
+        SampleGame.start(args);
     }
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
-
     }
 }
