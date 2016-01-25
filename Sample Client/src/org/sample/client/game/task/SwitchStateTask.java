@@ -1,4 +1,4 @@
-package org.sample.client.task;
+package org.sample.client.game.task;
 
 import com.jme3.app.state.AppStateManager;
 import com.jme3x.jfx.JmeFxContainer;

@@ -38,14 +38,20 @@ public final class ExecutorManager {
     private final ExecutorService syncExecutor;
 
     /**
+     * Исполнитель ожидающих задач.
+     */
+    private final ExecutorService waiteableExecutor;
+
+    /**
      * Исполнитель смены стадий интерфейса.
      */
-    private final ExecutorService switchStateExecutor;
+    private final ExecutorService switchStageExecutor;
 
     private ExecutorManager() {
         syncExecutor = Executors.newFixedThreadPool(1, new GroupThreadFactory("SynExecutor", GameThread.class, Thread.MAX_PRIORITY));
         asyncExecutor = Executors.newFixedThreadPool(3, new GroupThreadFactory("AsynExecutor", GameThread.class, Thread.MAX_PRIORITY));
-        switchStateExecutor = Executors.newSingleThreadExecutor(new GroupThreadFactory("SwitchStateExecutor", GameThread.class, Thread.MIN_PRIORITY));
+        switchStageExecutor = Executors.newSingleThreadExecutor(new GroupThreadFactory("SwitchStateExecutor", GameThread.class, Thread.MIN_PRIORITY));
+        waiteableExecutor = Executors.newCachedThreadPool(new GroupThreadFactory("WaitableExecutor", GameThread.class, Thread.MAX_PRIORITY));
     }
 
     /**
@@ -63,7 +69,7 @@ public final class ExecutorManager {
      * @param runnable задание, которое надо выполнить.
      */
     public void switchStateExecute(final Runnable runnable) {
-        switchStateExecutor.execute(runnable);
+        switchStageExecutor.execute(runnable);
     }
 
     /**
@@ -73,5 +79,14 @@ public final class ExecutorManager {
      */
     public void syncExecute(final Runnable runnable) {
         syncExecutor.execute(runnable);
+    }
+
+    /**
+     * Выполнение ожидающей задачи.
+     *
+     * @param runnable выполняемая задача.
+     */
+    public void waitableExecute(final Runnable runnable) {
+        waiteableExecutor.execute(runnable);
     }
 }

@@ -19,9 +19,11 @@ import org.sample.client.jme.post.PostEffect;
 import org.sample.client.jme.post.effect.BloomEffect;
 import org.sample.client.jme.post.effect.FXAAEffect;
 import org.sample.client.manager.ExecutorManager;
+import org.sample.client.manager.GameTaskManager;
 import org.sample.client.model.impl.Account;
+import org.sample.client.network.Network;
 import org.sample.client.stage.StageType;
-import org.sample.client.task.SwitchStateTask;
+import org.sample.client.game.task.SwitchStateTask;
 import org.sample.client.ui.util.UIUtils;
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
@@ -114,6 +116,9 @@ public class SampleGame extends SimpleApplication {
         LoggerManager.addListener(new FolderFileListener(logFolder));
     }
 
+    public static final long getCurrentTime() {
+        return System.currentTimeMillis();
+    }
 
     /**
      * Список пост эффектов в игре.
@@ -363,6 +368,9 @@ public class SampleGame extends SimpleApplication {
         UIUtils.overrideTooltipBehavior(100, 5000, 0);
 
         ExecutorManager.getInstance();
+
+        InitializeManager.register(GameTaskManager.class);
+        InitializeManager.register(Network.class);
         InitializeManager.initialize();
 
         fxContainer = JmeFxContainer.install(this, guiNode, true, cursorDisplayProvider);
@@ -382,5 +390,12 @@ public class SampleGame extends SimpleApplication {
      */
     public final void syncUnlock(final long stamp) {
         lock.unlockWrite(stamp);
+    }
+
+    /**
+     * Попытка произвести синхронизирующую блокировку.
+     */
+    public long trySyncLock() {
+        return lock.tryWriteLock();
     }
 }
