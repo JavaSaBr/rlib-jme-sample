@@ -15,17 +15,20 @@ import javafx.application.Platform;
 import org.sample.client.config.Config;
 import org.sample.client.config.GameConfig;
 import org.sample.client.config.ScreenSize;
+import org.sample.client.executor.impl.GameThreadExecutor;
+import org.sample.client.game.task.SwitchStateTask;
 import org.sample.client.jme.post.PostEffect;
 import org.sample.client.jme.post.effect.BloomEffect;
 import org.sample.client.jme.post.effect.FXAAEffect;
 import org.sample.client.manager.ExecutorManager;
 import org.sample.client.manager.GameTaskManager;
+import org.sample.client.manager.UpdateObjectManager;
 import org.sample.client.model.impl.Account;
 import org.sample.client.network.Network;
 import org.sample.client.stage.StageType;
-import org.sample.client.game.task.SwitchStateTask;
 import org.sample.client.ui.util.UIUtils;
 import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerLevel;
 import rlib.logging.LoggerManager;
@@ -370,6 +373,7 @@ public class SampleGame extends SimpleApplication {
         ExecutorManager.getInstance();
 
         InitializeManager.register(GameTaskManager.class);
+        InitializeManager.register(UpdateObjectManager.class);
         InitializeManager.register(Network.class);
         InitializeManager.initialize();
 
@@ -397,5 +401,83 @@ public class SampleGame extends SimpleApplication {
      */
     public long trySyncLock() {
         return lock.tryWriteLock();
+    }
+
+    /**
+     * Уведомлпение о завершении обновлении геометрии.
+     */
+    public void updateGeomEnd() {
+
+        final AtomicInteger executeUpdateGeometrySync = getExecuteUpdateGeometrySync();
+
+        if (executeUpdateGeometrySync.decrementAndGet() == 0) {
+            ConcurrentUtils.notifyAll(getWaitState());
+        }
+    }
+
+    /**
+     * Ожидание возможности начать обновлять геометрию.
+     */
+    public void updateGeomStart() {
+
+        final AtomicInteger waitUpdateGeometrySync = getWaitUpdateGeometrySync();
+
+        synchronized (waitUpdateGeometrySync) {
+            waitUpdateGeometrySync.incrementAndGet();
+            ConcurrentUtils.waitInSynchronize(waitUpdateGeometrySync);
+        }
+    }
+
+    @Override
+    public void update() {
+
+        final JmeFxContainer fxContainer = getFxContainer();
+
+        final AtomicInteger waitUpdateGeometrySync = getWaitUpdateGeometrySync();
+        final AtomicInteger executeUpdateGeometrySync = getExecuteUpdateGeometrySync();
+        final AtomicInteger waitState = getWaitState();
+
+        synchronized (waitState) {
+
+            if (waitUpdateGeometrySync.get() > 0) {
+
+                synchronized (waitUpdateGeometrySync) {
+                    executeUpdateGeometrySync.getAndSet(waitUpdateGeometrySync.getAndSet(0));
+                    ConcurrentUtils.notifyAllInSynchronize(waitUpdateGeometrySync);
+                }
+
+                ConcurrentUtils.waitInSynchronize(waitState, 10000);
+            }
+
+            //TODO здесь надо обновлять камеру
+        }
+
+        final long stamp = syncLock();
+        try {
+
+            final GameThreadExecutor gameThreadExecutor = GameThreadExecutor.getInstance();
+            gameThreadExecutor.execute();
+
+            if (paused) {
+                return;
+            }
+
+            if (fxContainer.isNeedWriteToJME()) {
+                fxContainer.writeToJME();
+            }
+
+            super.update();
+
+        } catch (final ArrayIndexOutOfBoundsException | NullPointerException e) {
+            LOGGER.warning(e);
+            System.exit(1);
+        } catch (final IllegalStateException e) {
+            LOGGER.warning(e);
+        } finally {
+            syncUnlock(stamp);
+        }
+
+        listener.setLocation(cam.getLocation());
+        listener.setRotation(cam.getRotation());
     }
 }
