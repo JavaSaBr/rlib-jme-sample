@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<list>
+	<!-- класс драйвера базы данных -->
+	<set name="DataBase.driver" value="com.mysql.jdbc.Driver" />
+	<!-- адресс базы данных -->
+	<set name="DataBase.url" value="jdbc:mysql://localhost/gdb" />
+	
+	<!-- логин для доступа к базе данных -->
+	<set name="DataBase.login" value="root" />
+	<!-- пароль для доступа к базе данных -->
+	<set name="DataBase.password" value="root" />
+	
+	<!-- максимальное кол-во коннектов к базе в пуле -->
+	<set name="DataBase.maxConnections" value="30" />
+	<!-- максимальное кол-во создаваемых statements -->
+	<set name="DataBase.maxStatemens" value="1000" />
+	<!-- чистить ли БД при старте сервера -->
+	<set name="DataBase.cleaningStart" value="true" />
+	<!-- использование дополнительного кэша коннектов -->
+	<set name="DataBase.useCache" value="true" />
+</list>    

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<list>
+	<!-- название группы сетевых потоков -->
+	<set name="Network.groupName" value="Network" />
+	<!-- размер группы сетевых потоков -->
+	<set name="Network.groupSize" value="8" />
+	<!-- максимальное число разрезаемых пакетов -->
+	<set name="Network.maximumPacketCut" value="10" />
+	<!-- приоритет сетевых потоков -->
+	<set name="Network.threadProirity" value="8" />
+	<!-- размер буфера для чтения пакетов -->
+	<set name="Network.readBufferSize" value="1024" />
+	<!-- размер буфера для записи пакетов -->
+	<set name="Network.writeBufferSize" value="40900" />
+</list>

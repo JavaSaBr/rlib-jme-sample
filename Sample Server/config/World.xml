@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<list>
+	<!-- время жизни выпавшего итема с моба в секундах -->
+	<set name="World.lifeTimeDropItem" value="60" />
+	<!-- время блокировки выпавшего итема на поднятие чужаком в секундах -->
+	<set name="World.blockTimeDropItem" value="0" />
+	
+	<!-- ширина региона в мире (2048)-->
+	<set name="World.widthRegion" value="2048" />
+	<!-- высота региона в мире (2048) -->
+	<set name="World.heightRegion" value="4096" />
+	
+	<!-- минимальный уровень доступа для входа в мир -->
+	<set name="World.minAccessLevel" value="0" />
+	<!-- порт сервера для бинда -->
+	<set name="World.maxPlayerLevel" value="5" />
+	<!-- максимальная разница уровня игрока-моб для выпадения дропа (4) -->
+	<set name="Workld.maxDiffLevelOnDrop" value="4" />
+	
+	<!-- максимальный онлайн -->
+	<set name="World.maximumOnline" value="20" />
+
+	<!-- частота обновления объектов в мире -->
+	<set name="World.updateObjectInterval" value="100" />
+	<!-- стандартная дистанция видимости обычных объектов -->
+	<set name="World.defaultVisibleRange" value="3500" />
+    <!-- стандартная дистанция видимости локационных объектов -->
+    <set name="World.locationObjectVisibleRange" value="20000" />
+</list>    

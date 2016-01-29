@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<list>
+	<!-- название сервера -->
+	<set name="Server.name" value="Test Sever" />
+	<!-- версия игры сервера -->
+	<set name="Server.version" value="0.0" />
+	<!-- тип сервера -->
+	<set name="Server.type" value="TEST" />
+
+	<!-- адресс гейм сервера -->
+	<set name="Server.host" value="localhost" />
+	<!-- порт сервера для бинда гейма -->
+	<set name="Server.port" value="14000" />
+
+	<!-- допустимые символы для нового ника -->
+	<set name="Server.userNameTemplate" value="([0-9A-Za-z]{2,16})|([0-9\u0410-\u044f]{2,16})|([0-9А-Яа-я]{2,16})" />
+
+	<!-- тип фильтра подключений -->
+	<set name="Server.acceptFilter" value="NoBlocking" />
+	<!-- адресс вывода в фаил онлайна сервера -->
+	<set name="Server.onlineFile" value="" />
+</list>    

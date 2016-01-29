@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<list>
+	<!-- минимальный уровень прав для входа на сервер -->
+	<set name="Account.minAccessLevel" value="0" />
+	<!-- автоматически ли регистрировать аккаунты -->
+	<set name="Account.autoRegister" value="true" />
+</list>
