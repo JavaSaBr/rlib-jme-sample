@@ -1,9 +1,9 @@
-Package: jme3-spaceshift-editor
+Package: rlib-jme-sample
 Version: @version@
-Section: graphics
+Section: game
 Maintainer: spaceshift.ru <javasabr@gmail.com>
 Priority: optional
 Architecture: amd64
-Provides: jme3-spaceshift-editor
+Provides: rlib-jme-sample
 Homepage: https://spaceshift.ru/
-Description: Editor for jMonkeyEngine 3 by SpaceShift Team
+Description: Sample of client-server game based on rlib by SpaceShift Team
