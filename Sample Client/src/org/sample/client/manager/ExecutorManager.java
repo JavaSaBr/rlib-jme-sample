@@ -1,5 +1,6 @@
 package org.sample.client.manager;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.GameThread;
 import rlib.concurrent.GroupThreadFactory;
 import rlib.logging.Logger;
@@ -8,12 +9,13 @@ import rlib.logging.LoggerManager;
 import java.util.concurrent.*;
 
 /**
- * Менеджер пула потоков.
+ * The manager of executing other tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ExecutorManager {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(ExecutorManager.class);
 
     private static ExecutorManager instance;
@@ -28,65 +30,49 @@ public final class ExecutorManager {
     }
 
     /**
-     * Исполнитель асинхронных действий.
+     * The async tasks executor.
      */
+    @NotNull
     private final ExecutorService asyncExecutor;
 
     /**
-     * Исполнитель синхроных задач.
+     * The sync tasks executor.
      */
+    @NotNull
     private final ExecutorService syncExecutor;
 
     /**
-     * Исполнитель ожидающих задач.
+     * The waitable tasks executor.
      */
-    private final ExecutorService waiteableExecutor;
+    @NotNull
+    private final ExecutorService waitableExecutor;
 
     /**
-     * Исполнитель смены стадий интерфейса.
+     * The switch stage tasks executor.
      */
+    @NotNull
     private final ExecutorService switchStageExecutor;
 
     private ExecutorManager() {
         syncExecutor = Executors.newFixedThreadPool(1, new GroupThreadFactory("SynExecutor", GameThread.class, Thread.MAX_PRIORITY));
         asyncExecutor = Executors.newFixedThreadPool(3, new GroupThreadFactory("AsynExecutor", GameThread.class, Thread.MAX_PRIORITY));
         switchStageExecutor = Executors.newSingleThreadExecutor(new GroupThreadFactory("SwitchStateExecutor", GameThread.class, Thread.MIN_PRIORITY));
-        waiteableExecutor = Executors.newCachedThreadPool(new GroupThreadFactory("WaitableExecutor", GameThread.class, Thread.MAX_PRIORITY));
+        waitableExecutor = Executors.newCachedThreadPool(new GroupThreadFactory("WaitableExecutor", GameThread.class, Thread.MAX_PRIORITY));
     }
 
-    /**
-     * Выполнение задания в параллельном потоке.
-     *
-     * @param runnable задание, которое надо выполнить.
-     */
-    public void asyncExecute(final Runnable runnable) {
+    public void asyncExecute(@NotNull final Runnable runnable) {
         asyncExecutor.execute(runnable);
     }
 
-    /**
-     * Выполнение задания по смене стадии интерфейса.
-     *
-     * @param runnable задание, которое надо выполнить.
-     */
-    public void switchStateExecute(final Runnable runnable) {
+    public void switchStateExecute(@NotNull final Runnable runnable) {
         switchStageExecutor.execute(runnable);
     }
 
-    /**
-     * Выполнение задачи в синхронном порядке.
-     *
-     * @param runnable выполняемая задача.
-     */
-    public void syncExecute(final Runnable runnable) {
+    public void syncExecute(@NotNull final Runnable runnable) {
         syncExecutor.execute(runnable);
     }
 
-    /**
-     * Выполнение ожидающей задачи.
-     *
-     * @param runnable выполняемая задача.
-     */
-    public void waitableExecute(final Runnable runnable) {
-        waiteableExecutor.execute(runnable);
+    public void waitableExecute(@NotNull final Runnable runnable) {
+        waitableExecutor.execute(runnable);
     }
 }

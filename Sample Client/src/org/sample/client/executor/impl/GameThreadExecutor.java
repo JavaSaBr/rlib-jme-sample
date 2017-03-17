@@ -1,97 +1,97 @@
 package org.sample.client.executor.impl;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.SampleGame;
 import org.sample.client.game.task.GameTask;
 import org.sample.client.util.LocalObjects;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
+import rlib.function.ObjectLongObjectConsumer;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.pools.Foldable;
+import rlib.util.array.ConcurrentArray;
+import rlib.util.pools.Reusable;
 
 /**
- * Реализация исполнителя задач в основном потооке.
+ * The implementation of an executor to execute taks in the main game thread.
  *
  * @author Ronn
  */
 public class GameThreadExecutor {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(GameThreadExecutor.class);
-
+    @NotNull
     private static final GameThreadExecutor INSTANCE = new GameThreadExecutor();
 
+    @NotNull
     public static GameThreadExecutor getInstance() {
         return INSTANCE;
     }
 
-    /**
-     * Ожидающие исполнения задачи.
-     */
-    private final Array<GameTask> waitTasks;
+    @NotNull
+    private static final ObjectLongObjectConsumer<GameTask, LocalObjects> EXECUTE_FUNCTION =
+            (ObjectLongObjectConsumer<GameTask, LocalObjects>) (task, time, local) -> {
+
+        task.execute(local, time);
+
+        if (task instanceof Reusable) {
+            ((Reusable) task).release();
+        }
+    };
 
     /**
-     * Задачи которые должны сейчас выполнится.
+     * The list of waiting tasks.
      */
+    @NotNull
+    private final ConcurrentArray<GameTask> waitTasks;
+
+    /**
+     * The list of tasks to execute.
+     */
+    @NotNull
     private final Array<GameTask> execute;
 
     public GameThreadExecutor() {
-        this.waitTasks = ArrayFactory.newConcurrentAtomicArray(GameTask.class);
+        this.waitTasks = ArrayFactory.newConcurrentAtomicARSWLockArray(GameTask.class);
         this.execute = ArrayFactory.newArray(GameTask.class);
     }
 
     /**
-     * Добавление задачи на выполнение.
+     * Add a new task to execute.
      *
-     * @param gameTask задача на выполнение.
+     * @param gameTask the new game task.
      */
-    public void addToExecute(final GameTask gameTask) {
+    public void addToExecute(@NotNull final GameTask gameTask) {
 
-        final Array<GameTask> waitTasks = getWaitTasks();
-        waitTasks.writeLock();
+        final ConcurrentArray<GameTask> waitTasks = getWaitTasks();
+        final long stamp = waitTasks.writeLock();
         try {
             waitTasks.add(gameTask);
         } finally {
-            waitTasks.writeUnlock();
+            waitTasks.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнить ожидающие задачи.
+     * Execute all tasks.
      */
     public void execute() {
 
-        final Array<GameTask> waitTasks = getWaitTasks();
-
-        if (waitTasks.isEmpty()) {
-            return;
-        }
+        final ConcurrentArray<GameTask> waitTasks = getWaitTasks();
+        if (waitTasks.isEmpty()) return;
 
         final Array<GameTask> execute = getExecute();
         try {
 
-            waitTasks.writeLock();
+            final long stamp = waitTasks.writeLock();
             try {
                 execute.addAll(waitTasks);
                 waitTasks.clear();
             } finally {
-                waitTasks.writeUnlock();
+                waitTasks.writeUnlock(stamp);
             }
 
             final LocalObjects local = LocalObjects.get();
             final long currentTime = SampleGame.getCurrentTime();
 
-            for (final GameTask task : execute.array()) {
-
-                if (task == null) {
-                    break;
-                }
-
-                task.execute(local, currentTime);
-
-                if (task instanceof Foldable) {
-                    ((Foldable) task).release();
-                }
-            }
+            execute.forEach(currentTime, local, EXECUTE_FUNCTION);
 
         } finally {
             execute.clear();
@@ -99,16 +99,18 @@ public class GameThreadExecutor {
     }
 
     /**
-     * @return задачи которые должны сейчас выполнится.
+     * @return the list of tasks to execute.
      */
+    @NotNull
     private Array<GameTask> getExecute() {
         return execute;
     }
 
     /**
-     * @return ожидающие исполнения задачи.
+     * @return the list of waiting tasks.
      */
-    private Array<GameTask> getWaitTasks() {
+    @NotNull
+    private ConcurrentArray<GameTask> getWaitTasks() {
         return waitTasks;
     }
 }

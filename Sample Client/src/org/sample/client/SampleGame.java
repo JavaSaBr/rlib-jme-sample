@@ -12,6 +12,7 @@ import com.jme3x.jfx.cursor.proton.ProtonCursorProvider;
 import com.jme3x.jfx.util.os.OperatingSystem;
 import com.sun.javafx.cursor.CursorType;
 import javafx.application.Platform;
+import org.sample.client.config.CommandLineConfig;
 import org.sample.client.config.Config;
 import org.sample.client.config.GameConfig;
 import org.sample.client.config.ScreenSize;
@@ -59,7 +60,7 @@ public class SampleGame extends SimpleApplication {
         return GAME;
     }
 
-    public static void start(String[] args) throws IOException {
+    public static void start(final String[] args) throws IOException {
 
         // фикс рендера шрифтов в FX
         System.setProperty("prism.lcdtext", "false");
@@ -79,7 +80,7 @@ public class SampleGame extends SimpleApplication {
 
             ScreenSize.init();
 
-            LOGGER.info("address of server " + Config.SERVER_SOCKER_ADDRESS);
+            LOGGER.info("address of server " + Config.SERVER_SOCKET_ADDRESS);
 
             final GameConfig config = GameConfig.getInstance();
             final AppSettings settings = config.getSettings();
@@ -366,7 +367,6 @@ public class SampleGame extends SimpleApplication {
         final Array<PostEffect> postEffects = getPostEffects();
         postEffects.add(BloomEffect.bind(postProcessor));
         postEffects.add(FXAAEffect.bind(postProcessor));
-        postEffects.trimToSize();
 
         UIUtils.overrideTooltipBehavior(100, 5000, 0);
 

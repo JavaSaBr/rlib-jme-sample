@@ -1,30 +1,31 @@
 package org.sample.client.manager;
 
-import org.sample.client.executor.GameExecutor;
-import org.sample.client.executor.impl.UpdatableObjectGameExecutor;
+import org.jetbrains.annotations.NotNull;
+import org.sample.client.executor.GameUpdater;
+import org.sample.client.executor.impl.UpdatableObjectGameUpdater;
 import org.sample.client.model.util.UpdatableObject;
-import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.manager.InitializeManager;
+import rlib.util.dictionary.ConcurrentObjectDictionary;
 import rlib.util.dictionary.DictionaryFactory;
-import rlib.util.dictionary.ObjectDictionary;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 
 /**
- * Менеджер по обновлению различных объектов.
+ * The manager of updating game objects.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class UpdateObjectManager {
 
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(UpdateObjectManager.class);
 
+    @NotNull
     private static final Runtime RUNTIME = Runtime.getRuntime();
 
-    public static final int PROP_EXECUTORS = RUNTIME.availableProcessors();
+    private static final int PROP_EXECUTORS = RUNTIME.availableProcessors();
 
     private static UpdateObjectManager instance;
 
@@ -38,123 +39,85 @@ public class UpdateObjectManager {
     }
 
     /**
-     * Таблица какой объект в каком исполнителе.
+     * The dictionary to map which object is in which updater.
      */
-    private final ObjectDictionary<UpdatableObject, GameExecutor<UpdatableObject>> objectToExecutor;
+    @NotNull
+    private final ConcurrentObjectDictionary<UpdatableObject, GameUpdater<UpdatableObject>> objectToUpdater;
 
     /**
-     * Исполнитель обновлений объектов.
+     * The list of object updaters.
      */
-    private final GameExecutor<UpdatableObject>[] executors;
+    @NotNull
+    private final GameUpdater<UpdatableObject>[] updaters;
 
     /**
-     * Индекс следующего исполнителя.
+     * The index of the next updater.
      */
-    private final AtomicInteger nextExecutorIndex;
+    @NotNull
+    private final AtomicInteger nextUpdaterIndex;
 
-    /**
-     * Синхронизатор.
-     */
-    private final Lock lock;
-
-    public UpdateObjectManager() {
+    private UpdateObjectManager() {
         InitializeManager.valid(getClass());
 
-        this.objectToExecutor = DictionaryFactory.newObjectDictionary();
-        this.lock = LockFactory.newPrimitiveAtomicLock();
-        this.nextExecutorIndex = new AtomicInteger();
-        this.executors = new UpdatableObjectGameExecutor[PROP_EXECUTORS];
+        this.objectToUpdater = DictionaryFactory.newConcurrentAtomicObjectDictionary();
+        this.nextUpdaterIndex = new AtomicInteger();
+        this.updaters = new UpdatableObjectGameUpdater[PROP_EXECUTORS];
 
-        for (int i = 0, length = executors.length; i < length; i++) {
-            executors[i] = new UpdatableObjectGameExecutor(i + 1);
+        for (int i = 0, length = updaters.length; i < length; i++) {
+            updaters[i] = new UpdatableObjectGameUpdater(i + 1);
         }
     }
 
     /**
-     * Добавление на обновление нового объекта,.
+     * Add new object ot updating.
      *
-     * @param object новый объект.
+     * @param object the new object.
      */
-    public void addObject(final UpdatableObject object) {
+    public void addObject(@NotNull final UpdatableObject object) {
 
-        final GameExecutor<UpdatableObject> executor = getNextExecutor();
+        final GameUpdater<UpdatableObject> executor = nextUpdater();
+        final long stamp = objectToUpdater.writeLock();
+        try {
+            objectToUpdater.put(object, executor);
+            executor.addToUpdating(object);
+        } finally {
+            objectToUpdater.writeUnlock(stamp);
+        }
+    }
 
-        final Lock lock = getLock();
-        lock.lock();
+    /**
+     * Get the next updater.
+     *
+     * @return the next updater.
+     */
+    @NotNull
+    private GameUpdater<UpdatableObject> nextUpdater() {
+        final int result = nextUpdaterIndex.incrementAndGet();
+        if (result < updaters.length) return updaters[result];
+        nextUpdaterIndex.set(0);
+        return updaters[0];
+    }
+
+    /**
+     * Remove object from updating.
+     *
+     * @param object the removed object.
+     */
+    public void removeObject(@NotNull final UpdatableObject object) {
+        final long stamp = objectToUpdater.writeLock();
         try {
 
-            final ObjectDictionary<UpdatableObject, GameExecutor<UpdatableObject>> objectToExecutor = getObjectToExecutor();
-            objectToExecutor.put(object, executor);
+            final GameUpdater<UpdatableObject> executor = objectToUpdater.remove(object);
 
-            executor.execute(object);
+            if (executor == null) {
+                LOGGER.warning("not found updater for the object " + object);
+                return;
+            }
 
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * @return исполнители обновлений объектов.
-     */
-    private GameExecutor<UpdatableObject>[] getExecutors() {
-        return executors;
-    }
-
-    /**
-     * @return синхронизатор.
-     */
-    private Lock getLock() {
-        return lock;
-    }
-
-    private GameExecutor<UpdatableObject> getNextExecutor() {
-
-        final GameExecutor<UpdatableObject>[] executors = getExecutors();
-        final AtomicInteger nextExecutorIndex = getNextExecutorIndex();
-
-        final int result = nextExecutorIndex.incrementAndGet();
-
-        if (result < executors.length) {
-            return executors[result];
-        }
-
-        nextExecutorIndex.set(0);
-
-        return executors[0];
-    }
-
-    /**
-     * @return индекс следующего исполнителя.
-     */
-    private AtomicInteger getNextExecutorIndex() {
-        return nextExecutorIndex;
-    }
-
-    /**
-     * @return словарь какой объект в каком исполнителе.
-     */
-    private ObjectDictionary<UpdatableObject, GameExecutor<UpdatableObject>> getObjectToExecutor() {
-        return objectToExecutor;
-    }
-
-    /**
-     * Удалить объект из обновлений.
-     *
-     * @param object удаляемый объект.
-     */
-    public void removeObject(final UpdatableObject object) {
-
-        final Lock lock = getLock();
-        lock.lock();
-        try {
-
-            final ObjectDictionary<UpdatableObject, GameExecutor<UpdatableObject>> objectToExecutor = getObjectToExecutor();
-
-            final GameExecutor<UpdatableObject> executor = objectToExecutor.remove(object);
-            executor.remove(object);
+            executor.removeFromUpdating(object);
 
         } finally {
-            lock.unlock();
+            objectToUpdater.writeUnlock(stamp);
         }
     }
 }

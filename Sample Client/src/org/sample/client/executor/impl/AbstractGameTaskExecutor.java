@@ -1,82 +1,88 @@
 package org.sample.client.executor.impl;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.GameThread;
 import org.sample.client.executor.GameTaskExecutor;
 import org.sample.client.game.task.GameTask;
 import rlib.concurrent.lock.LockFactory;
+import rlib.concurrent.lock.Lockable;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.util.Synchronized;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 
 /**
- * Базовая реализация исполнителя игровых задач.
+ * The base implementation of task executor.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public abstract class AbstractGameTaskExecutor extends GameThread implements GameTaskExecutor, Synchronized {
+public abstract class AbstractGameTaskExecutor extends GameThread implements GameTaskExecutor, Lockable {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(GameTaskExecutor.class);
 
+    @NotNull
     protected static final Consumer<GameTask> FINISH_TASK_FUNC = gameTask -> {
-        if (gameTask instanceof Foldable) {
-            ((Foldable) gameTask).release();
+        if (gameTask instanceof Reusable) {
+            ((Reusable) gameTask).release();
         }
     };
 
     /**
-     * Список задач на исполнение во время ближайшей фазы.
+     * The list of task to execute.
      */
+    @NotNull
     private final Array<GameTask> execute;
 
     /**
-     * Список выполненных задач.
+     * The list of executed tasks.
      */
+    @NotNull
     private final Array<GameTask> executed;
 
     /**
-     * Список ожидающих задач на исполнении.
+     * The list of waiting executing tasks.
      */
+    @NotNull
     private final Array<GameTask> waitTasks;
 
     /**
-     * Находится ли исполнитель в ожидании.
+     * The flag of waiting new tasks.
      */
-    private final AtomicBoolean wait;
+    @NotNull
+    protected final AtomicBoolean wait;
 
     /**
-     * Блокировщик.
+     * The lock.
      */
+    @NotNull
     private final Lock lock;
 
     public AbstractGameTaskExecutor() {
         this.execute = createExecuteArray();
         this.executed = createExecuteArray();
         this.waitTasks = createExecuteArray();
-        this.lock = LockFactory.newPrimitiveAtomicLock();
+        this.lock = LockFactory.newAtomicLock();
         this.wait = new AtomicBoolean(false);
     }
 
+    @NotNull
     protected Array<GameTask> createExecuteArray() {
         return ArrayFactory.newArray(GameTask.class);
     }
 
     @Override
-    public void execute(final GameTask gameTask) {
+    public void execute(@NotNull final GameTask gameTask) {
         lock();
         try {
 
             final Array<GameTask> waitTasks = getWaitTasks();
             waitTasks.add(gameTask);
-
-            final AtomicBoolean wait = getWait();
 
             if (wait.get()) {
                 synchronized (wait) {
@@ -92,30 +98,26 @@ public abstract class AbstractGameTaskExecutor extends GameThread implements Gam
     }
 
     /**
-     * @return список задач на исполнение во время ближайшей фазы.
+     * @return the list of task to execute.
      */
-    public Array<GameTask> getExecute() {
+    @NotNull
+    protected Array<GameTask> getExecute() {
         return execute;
     }
 
     /**
-     * @return список выполненных задач.
+     * @return the list of executed tasks.
      */
-    public Array<GameTask> getExecuted() {
+    @NotNull
+    protected Array<GameTask> getExecuted() {
         return executed;
     }
 
     /**
-     * @return находится ли исполнитель в ожидании.
+     * @return the list of waiting executing tasks.
      */
-    public AtomicBoolean getWait() {
-        return wait;
-    }
-
-    /**
-     * @return список ожидающих задач на исполнении.
-     */
-    public Array<GameTask> getWaitTasks() {
+    @NotNull
+    protected Array<GameTask> getWaitTasks() {
         return waitTasks;
     }
 

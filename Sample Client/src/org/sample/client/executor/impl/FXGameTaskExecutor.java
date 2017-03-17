@@ -1,58 +1,58 @@
 package org.sample.client.executor.impl;
 
 import com.sun.javafx.application.PlatformImpl;
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.SampleGame;
 import org.sample.client.game.task.GameTask;
 import org.sample.client.util.LocalObjects;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.util.array.Array;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
- * Реализация исполнителья игровых задач по обновлению FX UI.
+ * The implementation of an executor to execute JavaFX tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FXGameTaskExecutor extends AbstractGameTaskExecutor {
 
+    /**
+     * The max of javaFX tasks to execute per an iteration.
+     */
     private static final int EXECUTE_LIMIT = 300;
 
     /**
-     * Контейнер локальных объектов для потока JavaFX.
+     * The local objects for javaFX thread.
      */
+    @NotNull
     private final LocalObjects fxLocal;
 
     /**
-     * Задча по выполнению подзадач в потоке JavaFX.
+     * The task to execute list of tasks in javaFX thread.
      */
-    private final Runnable fxTask = () -> doExecute(getExecute(), getExecuted(), getFxLocal(), SampleGame.getInstance());
+    @NotNull
+    private final Runnable fxTask = () -> execute(getExecute(), getExecuted(), getFxLocal());
 
     public FXGameTaskExecutor() {
         setName(FXGameTaskExecutor.class.getSimpleName());
         setPriority(NORM_PRIORITY);
-
         this.fxLocal = new LocalObjects();
-
         start();
     }
 
     /**
-     * Процесс обновления состояния задач.
+     * Execute javaFX tasks.
      */
-    protected void doExecute(final Array<GameTask> execute, final Array<GameTask> executed, final LocalObjects local, final SampleGame game) {
+    protected void execute(@NotNull final Array<GameTask> execute, @NotNull final Array<GameTask> executed,
+                           @NotNull final LocalObjects local) {
 
         final GameTask[] array = execute.array();
 
         for (int i = 0, length = execute.size(); i < length; ) {
-
-            final long time = System.currentTimeMillis();
-
             try {
 
                 final long currentTime = SampleGame.getCurrentTime();
 
-                for (int count = 0, limit = EXECUTE_LIMIT; count < limit && i < length; count++, i++) {
+                for (int count = 0; count < EXECUTE_LIMIT && i < length; count++, i++) {
 
                     final GameTask task = array[i];
 
@@ -67,34 +67,11 @@ public class FXGameTaskExecutor extends AbstractGameTaskExecutor {
         }
     }
 
-    @Override
-    public void execute(final GameTask gameTask) {
-        lock();
-        try {
-
-            final Array<GameTask> waitTasks = getWaitTasks();
-            waitTasks.slowRemove(gameTask);
-            waitTasks.add(gameTask);
-
-            final AtomicBoolean wait = getWait();
-
-            if (wait.get()) {
-                synchronized (wait) {
-                    if (wait.compareAndSet(true, false)) {
-                        ConcurrentUtils.notifyAllInSynchronize(wait);
-                    }
-                }
-            }
-
-        } finally {
-            unlock();
-        }
-    }
-
     /**
-     * @return контейнер локальных объектов для потока JavaFX.
+     * @return the local objects for javaFX thread.
      */
-    public LocalObjects getFxLocal() {
+    @NotNull
+    private LocalObjects getFxLocal() {
         return fxLocal;
     }
 
@@ -105,9 +82,7 @@ public class FXGameTaskExecutor extends AbstractGameTaskExecutor {
         final Array<GameTask> executed = getExecuted();
         final Array<GameTask> waitTasks = getWaitTasks();
 
-        final AtomicBoolean wait = getWait();
-
-        while (true) {
+        for(;;) {
 
             executed.clear();
             execute.clear();
@@ -137,7 +112,6 @@ public class FXGameTaskExecutor extends AbstractGameTaskExecutor {
                 continue;
             }
 
-            // обновление состояния задач
             PlatformImpl.runAndWait(fxTask);
 
             if (executed.isEmpty()) {

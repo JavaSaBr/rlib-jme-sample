@@ -1,19 +1,19 @@
 package org.sample.client.config;
 
+import static java.lang.Math.max;
+import static rlib.util.dictionary.DictionaryFactory.newObjectDictionary;
+import org.jetbrains.annotations.NotNull;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayComparator;
 import rlib.util.array.ArrayFactory;
-import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
 import java.awt.*;
 
-import static java.lang.Math.max;
-
 /**
- * Перечисление возможных разрешений экрана.
+ * The screen size model.
  *
- * @author Ronn
+ * @author JavaSabr
  */
 public class ScreenSize {
 
@@ -22,21 +22,22 @@ public class ScreenSize {
     public static final int SCREEN_SIZE_MIN_WIDTH = 1244;
 
     /**
-     * Таблица доступных расширений экрана.
+     * The table of available screen sizes.
      */
-    private static final ObjectDictionary<String, ScreenSize> SCREEN_SIZE_TABLE = DictionaryFactory.newObjectDictionary();
+    private static final ObjectDictionary<String, ScreenSize> SCREEN_SIZE_TABLE = newObjectDictionary();
 
     /**
-     * Список доступных разрешений.
+     * The list of available screen sizes.
      */
     private static ScreenSize[] values;
 
     /**
-     * Инициализация списка доступных разрешений экрана.
+     * Init the list of available screen sizes.
      */
     public static void init() {
 
-        final GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice device = environment.getDefaultScreenDevice();
         final DisplayMode[] modes = device.getDisplayModes();
 
         final Array<ScreenSize> container = ArrayFactory.newArraySet(ScreenSize.class);
@@ -78,38 +79,40 @@ public class ScreenSize {
     }
 
     /**
-     * @param size строкое представление разрешения.
-     * @return ссылка на инстанс размера.
+     * @param size the string presentation of a screen size.
+     * @return the screen size.
      */
-    public static ScreenSize sizeOf(final String size) {
+    @NotNull
+    public static ScreenSize sizeOf(@NotNull final String size) {
         final ScreenSize screenSize = SCREEN_SIZE_TABLE.get(size);
         return screenSize == null ? new ScreenSize(SCREEN_SIZE_MIN_WIDTH, SCREEN_SIZE_MIN_HEIGHT, false) : screenSize;
     }
 
     /**
-     * @return список доступных разрешений.
+     * @return the list of available screen sizes.
      */
     public static ScreenSize[] values() {
         return values;
     }
 
     /**
-     * Строковый вид.
+     * The string presentation.
      */
+    @NotNull
     private final String size;
 
     /**
-     * Ширина экрана.
+     * The screen width.
      */
     private final int width;
 
     /**
-     * Высота кэрана.
+     * The screen height.
      */
     private final int height;
 
     /**
-     * Сортировщик размеров экрана.
+     * The screen size comparator.
      */
     private static final ArrayComparator<ScreenSize> COMPARATOR = (first, second) -> {
 
@@ -120,7 +123,7 @@ public class ScreenSize {
     };
 
     /**
-     * Поддерживается ли полный экран.
+     * The flag of supporting full screen mode.
      */
     private final boolean fullscreenSupported;
 
@@ -154,14 +157,14 @@ public class ScreenSize {
     }
 
     /**
-     * @return высота.
+     * @return the screen height.
      */
     public final int getHeight() {
         return height;
     }
 
     /**
-     * @return ширина.
+     * @return the screen width.
      */
     public final int getWidth() {
         return width;
@@ -177,7 +180,7 @@ public class ScreenSize {
     }
 
     /**
-     * @return поддерживается ли полноэкранный режим.
+     * @return the flag of supporting full screen mode..
      */
     public boolean isFullscreenSupported() {
         return fullscreenSupported;

@@ -1,5 +1,6 @@
 package org.sample.client.document;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import rlib.data.AbstractStreamDocument;
@@ -8,17 +9,17 @@ import rlib.util.VarTable;
 import java.io.InputStream;
 
 /**
- * Реализация парсинга конфигурации из файла.
+ * The configuration parser.
  * 
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class DocumentConfig extends AbstractStreamDocument<VarTable> {
 
-	public static final String NODE_LIST = "list";
-    public static final String NODE_SET = "set";
+	private static final String NODE_LIST = "list";
+    private static final String NODE_SET = "set";
 
-    public static final String ATTR_NAME = "name";
-    public static final String ATTR_VALUE = "value";
+    private static final String ATTR_NAME = "name";
+    private static final String ATTR_VALUE = "value";
 
     public DocumentConfig(InputStream stream) {
 		super(stream);
@@ -30,7 +31,7 @@ public final class DocumentConfig extends AbstractStreamDocument<VarTable> {
 	}
 
 	@Override
-	protected void parse(final Document document) {
+	protected void parse(@NotNull final Document document) {
 		for(Node child = document.getFirstChild(); child != null; child = child.getNextSibling()) {
 			if(NODE_LIST.equals(child.getNodeName())) {
 				result.parse(child, NODE_SET, ATTR_NAME, ATTR_VALUE);

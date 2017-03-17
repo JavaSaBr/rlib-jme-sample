@@ -1,43 +1,36 @@
 package org.sample.client.game.task;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.util.LocalObjects;
 
 /**
- * Задача связанная с компонентами игры.
+ * The interface to implement game tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface GameTask extends Comparable<GameTask> {
 
-    public static final int MIN_PRIORITY = 0;
-    public static final int MAX_PRIORITY = 10;
-    public static final int NORMAL_PRIORITY = 5;
+    int MIN_PRIORITY = 0;
+    int MAX_PRIORITY = 10;
+    int NORMAL_PRIORITY = 5;
 
     @Override
-    public default int compareTo(final GameTask task) {
+    default int compareTo(@NotNull final GameTask task) {
         return task.getPriority() - getPriority();
     }
 
     /**
-     * @return завершено ли выполение задачи.
+     * Execute this task.
+     *
+     * @return true if need to stop executing this task.
      */
-    public boolean execute(LocalObjects local, long currentTime);
+    boolean execute(@NotNull LocalObjects local, long currentTime);
 
     /**
      * @return приоритет задачи.
      */
-    public default int getPriority() {
+    default int getPriority() {
         return MIN_PRIORITY;
-    }
-
-    /**
-     * Идет сравнения задачи с проверяемым объектом.
-     *
-     * @param object сравнивый объект.
-     * @return соответствует ли задача объекту.
-     */
-    public default boolean isMatches(final Object object) {
-        return false;
     }
 }

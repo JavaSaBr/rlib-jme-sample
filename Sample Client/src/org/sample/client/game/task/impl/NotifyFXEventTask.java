@@ -1,44 +1,43 @@
 package org.sample.client.game.task.impl;
 
 import javafx.event.Event;
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.game.task.LimitedGameTask;
 import org.sample.client.manager.GameTaskManager;
 import org.sample.client.ui.event.FXEventManager;
 import org.sample.client.util.LocalObjects;
-import rlib.util.pools.Foldable;
-import rlib.util.pools.FoldablePool;
 import rlib.util.pools.PoolFactory;
+import rlib.util.pools.ReusablePool;
 
 /**
- * Задача по отправки события для FX UI.
+ * The reusable task to notify javaFx about new event in the javaFX thread.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public class NotifyFXEventTask extends LimitedGameTask implements Foldable {
+public class NotifyFXEventTask extends LimitedGameTask {
 
+    @NotNull
     private static final FXEventManager FX_EVENT_MANAGER = FXEventManager.getInstance();
 
-    private static final FoldablePool<NotifyFXEventTask> POOL = PoolFactory.newAtomicFoldablePool(NotifyFXEventTask.class);
+    @NotNull
+    private static final ReusablePool<NotifyFXEventTask> POOL = PoolFactory.newConcurrentAtomicARSWLockReusablePool(NotifyFXEventTask.class);
 
-    public static final NotifyFXEventTask getInstance(final Event event) {
+    @NotNull
+    public static NotifyFXEventTask getInstance(@NotNull final Event event) {
 
-        NotifyFXEventTask task = POOL.take();
-
-        if (task == null) {
-            task = new NotifyFXEventTask();
-        }
-
+        final NotifyFXEventTask task = POOL.take(NotifyFXEventTask::new);
         task.event = event;
 
         return task;
     }
 
     /**
-     * Отправляемое событие.
+     * The new event.
      */
+    @NotNull
     private Event event;
 
-    public NotifyFXEventTask() {
+    private NotifyFXEventTask() {
         super(GameTaskManager.PROP_EXECUTE_LIMIT);
     }
 
@@ -55,8 +54,6 @@ public class NotifyFXEventTask extends LimitedGameTask implements Foldable {
 
     @Override
     public String toString() {
-        return "NotifyFXEventTask{" +
-                "event=" + event +
-                '}';
+        return "NotifyFXEventTask{" + "event=" + event + '}';
     }
 }

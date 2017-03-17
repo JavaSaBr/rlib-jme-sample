@@ -1,15 +1,17 @@
 package org.sample.client.config;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.InetSocketAddress;
 
 /**
- * Обработчик изменения конфигурации по переданным аргументам.
- * 
- * @author Ronn
+ * Parser the configuration from command-line arguments.
+ *
+ * @author JavaSaBr
  */
 public class CommandLineConfig {
 
-	public static void args(String[] args) {
+	public static void args(@NotNull final String[] args) {
 
 		for(String arg : args) {
 
@@ -21,14 +23,15 @@ public class CommandLineConfig {
 
 			switch(values[0]) {
 				case "server": {
-					Config.SERVER_SOCKER_ADDRESS = getAddressFrom(values[1]);
+					Config.SERVER_SOCKET_ADDRESS = getAddressFrom(values[1]);
 					break;
 				}
 			}
 		}
 	}
 
-	private static InetSocketAddress getAddressFrom(String value) {
+	@NotNull
+	private static InetSocketAddress getAddressFrom(@NotNull final String value) {
 		final String[] values = value.split(":", 2);
 		return new InetSocketAddress(values[0], Integer.parseInt(values[1]));
 	}

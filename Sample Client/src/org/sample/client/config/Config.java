@@ -1,5 +1,6 @@
 package org.sample.client.config;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.GameThread;
 import org.sample.client.Starter;
 import org.sample.client.document.DocumentConfig;
@@ -13,56 +14,56 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 /**
- * Класс для конфигурирование игры.
+ * The client configuration.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class Config {
 
     public static final String CONFIG_RESOURCE_PATH = "/org/sample/client/config/config.xml";
 
     /**
-     * Адресс сокета сервера.
+     * The server address.
      */
-    public static InetSocketAddress SERVER_SOCKER_ADDRESS;
+    public static InetSocketAddress SERVER_SOCKET_ADDRESS;
 
     /**
-     * Адресс сервера.
+     * The server host.
      */
     public static String SERVER_HOST;
 
     /**
-     * Путь к папке клиента.
+     * The path to client folder.
      */
     public static String PROJECT_PATH;
 
     /**
-     * Порт для подключения к серверу.
+     * The server port.
      */
     public static int SERVER_PORT;
 
     /**
-     * Размер читаемого буфера.
+     * The read buffer size.
      */
     public static int NETWORK_READ_BUFFER_SIZE;
 
     /**
-     * Размер записываемого буфера.
+     * The write buffer size.
      */
     public static int NETWORK_WRITE_BUFFER_SIZE;
 
     /**
-     * Размер группы поток сети.
+     * The network group.
      */
     public static int NETWORK_GROUP_SIZE;
 
     /**
-     * Приоритет сетевых потоков.
+     * The network thread priority.
      */
     public static int NETWORK_THREAD_PRIORITY;
 
     /**
-     * Настройки сети.
+     * The network config.
      */
     public static NetworkConfig NETWORK_CONFIG = new NetworkConfig() {
 
@@ -81,6 +82,7 @@ public abstract class Config {
             return NETWORK_READ_BUFFER_SIZE;
         }
 
+        @NotNull
         @Override
         public Class<? extends Thread> getThreadClass() {
             return GameThread.class;
@@ -108,12 +110,12 @@ public abstract class Config {
     };
 
     /**
-     * Отображать дебаг.
+     * Enable dev debug.
      */
     public static boolean DEV_DEBUG;
 
     /**
-     * Загрузка конфига игры.
+     * Init config.
      */
     public static void init() throws UnknownHostException {
 
@@ -122,7 +124,7 @@ public abstract class Config {
         SERVER_HOST = vars.getString("Server.host", "localhost");
         SERVER_PORT = vars.getInteger("Server.port", 1000);
 
-        SERVER_SOCKER_ADDRESS = new InetSocketAddress(InetAddress.getByName(SERVER_HOST), SERVER_PORT);
+        SERVER_SOCKET_ADDRESS = new InetSocketAddress(InetAddress.getByName(SERVER_HOST), SERVER_PORT);
 
         NETWORK_READ_BUFFER_SIZE = vars.getInteger("Network.readBufferSize", 8388608);
         NETWORK_WRITE_BUFFER_SIZE = vars.getInteger("Network.writeBufferSize", 8388608);

@@ -3,14 +3,14 @@ package org.sample.client.executor.impl;
 import org.jetbrains.annotations.NotNull;
 import org.sample.client.GameThread;
 import org.sample.client.SampleGame;
-import org.sample.client.executor.GameExecutor;
+import org.sample.client.executor.GameUpdater;
 import org.sample.client.model.util.UpdatableObject;
 import org.sample.client.util.LocalObjects;
 import rlib.concurrent.lock.LockFactory;
+import rlib.concurrent.lock.Lockable;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.util.Synchronized;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -18,79 +18,80 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Исполнитель обновления объектов.
+ * The implementation of an updated game objects.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public class UpdatableObjectGameExecutor extends GameThread implements Synchronized, GameExecutor<UpdatableObject> {
+public class UpdatableObjectGameUpdater extends GameThread implements Lockable, GameUpdater<UpdatableObject> {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(UpdatableObjectGameExecutor.class);
+    @NotNull
+    private static final Logger LOGGER = LoggerManager.getLogger(UpdatableObjectGameUpdater.class);
 
     /**
-     * Лимит обновлений объектов за одну фазу.
+     * The limit to update objects per iteration.
      */
     private static final int UPDATE_LIMIT = 100;
 
     /**
-     * Лимит финиширований объектов за одну фазу.
+     * The limit to finishUpdating objects per iteration.
      */
     private static final int FINISH_LIMIT = 3;
 
     /**
-     * Список исполняемых объектов.
+     * The general list of objects to update.
      */
+    @NotNull
     private final Array<UpdatableObject> objects;
 
     /**
-     * Список на обновление.
+     * The list of object to update for one iteration.
      */
+    @NotNull
     private final Array<UpdatableObject> update;
 
     /**
-     * Список завершенных объектов.
+     * The list of finished objects.
      */
+    @NotNull
     private final Array<UpdatableObject> finished;
 
     /**
-     * Находится ли исполнитель в ожидании.
+     * The flag of waiting new objects.
      */
+    @NotNull
     private final AtomicBoolean wait;
 
     /**
-     * Блокировщик.
+     * The lock.
      */
+    @NotNull
     private final Lock lock;
 
-    public UpdatableObjectGameExecutor(final int order) {
+    public UpdatableObjectGameUpdater(final int order) {
         this.objects = ArrayFactory.newArray(UpdatableObject.class);
         this.update = ArrayFactory.newArray(UpdatableObject.class);
         this.finished = ArrayFactory.newArray(UpdatableObject.class);
-        this.lock = LockFactory.newPrimitiveAtomicLock();
+        this.lock = LockFactory.newAtomicLock();
         this.wait = new AtomicBoolean(false);
 
-        setName(UpdatableObjectGameExecutor.class.getSimpleName() + "_" + order);
+        setName(UpdatableObjectGameUpdater.class.getSimpleName() + "_" + order);
         setPriority(NORM_PRIORITY - 2);
         start();
     }
 
     /**
-     * Процесс финиширования объектов.
+     * Finish objects.
      */
-    protected void doFinish(final Array<UpdatableObject> finished, final SampleGame game) {
+    private void finish(@NotNull final Array<UpdatableObject> finished, @NotNull final SampleGame game) {
 
         final UpdatableObject[] array = finished.array();
 
         for (int i = 0, length = finished.size(); i < length; ) {
-
-            long time = 0;
-
             final long stamp = game.asyncLock();
             try {
 
-                time = System.currentTimeMillis();
-
-                for (int count = 0, limit = FINISH_LIMIT; count < limit && i < length; count++, i++) {
-                    array[i].finish();
+                for (int count = 0; count < FINISH_LIMIT && i < length; count++, i++) {
+                    array[i].finishUpdating();
                 }
 
             } catch (final Exception e) {
@@ -102,22 +103,22 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
     }
 
     /**
-     * Процесс обновление объектов..
+     * Update game objects.
      */
-    protected void doUpdate(final Array<UpdatableObject> update, final Array<UpdatableObject> finished, final LocalObjects local, final SampleGame game) {
+    private void update(@NotNull final Array<UpdatableObject> update, @NotNull final Array<UpdatableObject> finished,
+                        @NotNull final LocalObjects local, @NotNull final SampleGame game) {
 
         final UpdatableObject[] array = update.array();
 
+        long time;
+
         for (int i = 0, length = update.size(); i < length; ) {
-
-            long time = 0;
-
             game.updateGeomStart();
             try {
 
                 time = SampleGame.getCurrentTime();
 
-                for (int count = 0, limit = UPDATE_LIMIT; count < limit && i < length; count++, i++) {
+                for (int count = 0; count < UPDATE_LIMIT && i < length; count++, i++) {
 
                     final UpdatableObject object = array[i];
 
@@ -135,7 +136,7 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
     }
 
     @Override
-    public void execute(@NotNull final UpdatableObject object) {
+    public void addToUpdating(@NotNull final UpdatableObject object) {
         lock();
         try {
 
@@ -147,8 +148,6 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
             }
 
             objects.add(object);
-
-            final AtomicBoolean wait = getWait();
 
             if (wait.get()) {
                 synchronized (wait) {
@@ -164,31 +163,27 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
     }
 
     /**
-     * @return список завершенных объектов.
+     * @return the list of finished objects.
      */
-    public Array<UpdatableObject> getFinished() {
+    @NotNull
+    private Array<UpdatableObject> getFinished() {
         return finished;
     }
 
     /**
-     * @return список исполняемых объектов.
+     * @return the general list of objects to update.
      */
-    public Array<UpdatableObject> getObjects() {
+    @NotNull
+    private Array<UpdatableObject> getObjects() {
         return objects;
     }
 
     /**
-     * @return список на обновление.
+     * @return the list of object to update for one iteration.
      */
-    public Array<UpdatableObject> getUpdate() {
+    @NotNull
+    private Array<UpdatableObject> getUpdate() {
         return update;
-    }
-
-    /**
-     * @return находится ли исполнитель в ожидании.
-     */
-    public AtomicBoolean getWait() {
-        return wait;
     }
 
     @Override
@@ -197,7 +192,7 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
     }
 
     @Override
-    public void remove(@NotNull final UpdatableObject object) {
+    public void removeFromUpdating(@NotNull final UpdatableObject object) {
         lock();
         try {
 
@@ -217,11 +212,10 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
         final Array<UpdatableObject> objects = getObjects();
 
         final LocalObjects local = getLocalObects();
-        final AtomicBoolean wait = getWait();
 
         final SampleGame game = SampleGame.getInstance();
 
-        while (true) {
+        for(;;) {
 
             finished.clear();
             update.clear();
@@ -251,8 +245,7 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
                 continue;
             }
 
-            // обновление объектов
-            doUpdate(update, finished, local, game);
+            update(update, finished, local, game);
 
             if (finished.isEmpty()) {
                 continue;
@@ -265,8 +258,7 @@ public class UpdatableObjectGameExecutor extends GameThread implements Synchroni
                 unlock();
             }
 
-            // завершение эффектов
-            doFinish(finished, game);
+            finish(finished, game);
         }
     }
 

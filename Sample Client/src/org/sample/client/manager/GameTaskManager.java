@@ -1,9 +1,10 @@
 package org.sample.client.manager;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.executor.GameTaskExecutor;
 import org.sample.client.executor.impl.BackgroundGameTaskExecutor;
 import org.sample.client.executor.impl.FXGameTaskExecutor;
-import org.sample.client.executor.impl.SyncGameTaskExecutor;
+import org.sample.client.executor.impl.GameThreadExecutor;
 import org.sample.client.game.task.GameTask;
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
@@ -11,23 +12,19 @@ import rlib.logging.LoggerManager;
 import rlib.manager.InitializeManager;
 
 /**
- * Менеджер по исполнению различных задач.
+ * The manager of executing game tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class GameTaskManager {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(GameTaskManager.class);
 
+    @NotNull
     private static final Runtime RUNTIME = Runtime.getRuntime();
 
-    public static final int PROP_BACKGROUND_TASK_EXECUTORS = RUNTIME.availableProcessors();
-
     public static final int PROP_EXECUTE_LIMIT = 1000;
-
-    public static final int PROP_MIN_LIMIT = 10;
-    public static final int PROP_NORMAL_LIMIT = 20;
-    public static final int PROP_MAX_LIMIT = 30;
 
     private static GameTaskManager instance;
 
@@ -41,32 +38,36 @@ public class GameTaskManager {
     }
 
     /**
-     * Список исполнителей фоновых.
+     * The list of background tasks executors.
      */
+    @NotNull
     private final GameTaskExecutor[] backgroundTaskExecutors;
 
     /**
-     * Исполнитель синхронизированных задач.
+     * The executor of game task in the main thread.
      */
-    private final GameTaskExecutor syncTaskExecutor;
+    @NotNull
+    private final GameThreadExecutor gameThreadExecutor;
 
     /**
-     * Исполнитель задач по обновлению FX UI.
+     * The executor of javaFx tasks.
      */
+    @NotNull
     private final GameTaskExecutor fxTaskExecutor;
 
     /**
-     * Индекс следующего исполнителя фоновых задач.
+     * The index of the next background task executor.
      */
+    @NotNull
     private final AtomicInteger nextBackgroundTaskExecutor;
 
-    public GameTaskManager() {
+    private GameTaskManager() {
         InitializeManager.valid(getClass());
 
-        this.syncTaskExecutor = new SyncGameTaskExecutor();
+        this.gameThreadExecutor = GameThreadExecutor.getInstance();
         this.fxTaskExecutor = new FXGameTaskExecutor();
 
-        this.backgroundTaskExecutors = new GameTaskExecutor[PROP_BACKGROUND_TASK_EXECUTORS];
+        this.backgroundTaskExecutors = new GameTaskExecutor[RUNTIME.availableProcessors()];
 
         for (int i = 0, length = backgroundTaskExecutors.length; i < length; i++) {
             backgroundTaskExecutors[i] = new BackgroundGameTaskExecutor(i + 1);
@@ -78,70 +79,46 @@ public class GameTaskManager {
     }
 
     /**
-     * Добавление на обработку фоновой задачи.
+     * Add a new background game task to execute.
      *
-     * @param task фоновая задача.
+     * @param task the new task.
      */
-    public void addBackgroundTask(final GameTask task) {
+    public void addBackgroundTask(@NotNull final GameTask task) {
 
         final GameTaskExecutor[] executors = getBackgroundTaskExecutors();
-        final AtomicInteger nextTaskExecutor = getNextBackgroundTaskExecutor();
-
-        final int index = nextTaskExecutor.incrementAndGet();
+        final int index = nextBackgroundTaskExecutor.incrementAndGet();
 
         if (index < executors.length) {
             executors[index].execute(task);
         } else {
-            nextTaskExecutor.set(0);
+            nextBackgroundTaskExecutor.set(0);
             executors[0].execute(task);
         }
     }
 
     /**
-     * Добавление на обработку задачи по обновлению FX UI.
+     * Add a javaFx task to execute.
      *
-     * @param task задача.
+     * @param task the new javaFX task.
      */
-    public void addFXTask(final GameTask task) {
-        final GameTaskExecutor executor = getFxTaskExecutor();
-        executor.execute(task);
+    public void addFXTask(@NotNull final GameTask task) {
+        fxTaskExecutor.execute(task);
     }
 
     /**
-     * Добавление на обработку пакетной задачи.
+     * Add new game task to execute in the main thread.
      *
-     * @param task пакетная задача.
+     * @param task the game task.
      */
-    public void addSyncTask(final GameTask task) {
-        final GameTaskExecutor executor = getSyncTaskExecutor();
-        executor.execute(task);
+    public void addGameTask(final GameTask task) {
+        gameThreadExecutor.addToExecute(task);
     }
 
     /**
-     * @return список исполнителей фоновых.
+     * @return the list of background tasks executors.
      */
-    protected GameTaskExecutor[] getBackgroundTaskExecutors() {
+    @NotNull
+    private GameTaskExecutor[] getBackgroundTaskExecutors() {
         return backgroundTaskExecutors;
-    }
-
-    /**
-     * @return исполнитель задач по обновлению FX UI.
-     */
-    protected GameTaskExecutor getFxTaskExecutor() {
-        return fxTaskExecutor;
-    }
-
-    /**
-     * @return индекс следующего исполнителя фоновых задач.
-     */
-    protected AtomicInteger getNextBackgroundTaskExecutor() {
-        return nextBackgroundTaskExecutor;
-    }
-
-    /**
-     * @return исполнитель синхронизированных задач.
-     */
-    protected GameTaskExecutor getSyncTaskExecutor() {
-        return syncTaskExecutor;
     }
 }

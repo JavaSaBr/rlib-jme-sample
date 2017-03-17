@@ -1,18 +1,19 @@
 package org.sample.client.executor;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.game.task.GameTask;
 
 /**
- * Интерфейс для реализация исполнителей игровых задач.
+ * The interface to implement an executor of game tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface GameTaskExecutor {
 
     /**
-     * Добавление на исполнение игровой задачи.
+     * Add a new game task to execute.
      *
-     * @param gameTask игровая задача.
+     * @param gameTask the new game task.
      */
-    public void execute(GameTask gameTask);
+    void execute(@NotNull GameTask gameTask);
 }

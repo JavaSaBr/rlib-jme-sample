@@ -1,28 +1,29 @@
 package org.sample.client.model.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.util.LocalObjects;
 
 /**
- * Интерфейс дял реализации обновляемого объекта.
+ * The interface to implement updatable object.
  * 
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface UpdatableObject {
 
 	/**
-	 * Завершение обновлений объекта.
+	 * Handle finishing updating.
 	 */
-	public default void finish() {
+	default void finishUpdating() {
 	}
 
 	/**
-	 * Обновление объекта.
+	 * Update this object.
 	 * 
-	 * @param local контейнер локальных объектов.
-	 * @param currentTime текущее время.
-	 * @return завершил ли объект задачи по обновлению.
+	 * @param local the container of thread local objects.
+	 * @param currentTime the current time.
+	 * @return true if need to finish updating.
 	 */
-	public default boolean update(final LocalObjects local, final long currentTime) {
+	default boolean update(@NotNull final LocalObjects local, final long currentTime) {
 		return false;
 	}
 }

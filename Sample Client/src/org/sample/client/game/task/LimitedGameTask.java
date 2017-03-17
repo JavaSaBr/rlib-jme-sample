@@ -1,27 +1,30 @@
 package org.sample.client.game.task;
 
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.util.LocalObjects;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
+import rlib.util.pools.Reusable;
 
 import java.awt.color.CMMException;
 
 /**
- * Целкическая ограниченная задача.
+ * The cycle task with limit of executing.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public abstract class LimitedGameTask implements GameTask {
+public abstract class LimitedGameTask implements GameTask, Reusable {
 
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(GameTask.class);
 
     /**
-     * Максимальное кол-во раз исполнений.
+     * The max count to execute.
      */
     private volatile int limit;
 
     /**
-     * Счетчик исполнений.
+     * The counter of executing this task.
      */
     private volatile int counter;
 
@@ -30,7 +33,7 @@ public abstract class LimitedGameTask implements GameTask {
     }
 
     @Override
-    public boolean execute(final LocalObjects local, final long currentTime) {
+    public boolean execute(@NotNull final LocalObjects local, final long currentTime) {
 
         try {
             return executeImpl(local, currentTime) || ++counter >= getLimit();
@@ -51,44 +54,35 @@ public abstract class LimitedGameTask implements GameTask {
     protected abstract boolean executeImpl(LocalObjects local, long currentTime);
 
     /**
-     * @return счетчик исполнений.
+     * @return the count of executing this task.
      */
-    public int getCounter() {
+    private int getCounter() {
         return counter;
     }
 
     /**
-     * @param counter счетчик исполнений.
+     * @return the max count to execute.
      */
-    public void setCounter(final int counter) {
-        this.counter = counter;
-    }
-
-    /**
-     * @return максимальное кол-во раз исполнений.
-     */
-    public int getLimit() {
+    private int getLimit() {
         return limit;
     }
 
     /**
-     * @param limit максимальное кол-во раз исполнений.
+     * @param limit the max count to execute.
      */
     public void setLimit(final int limit) {
         this.limit = limit;
     }
 
     /**
-     * @return последнее ли это выполнение.
+     * @return true if it was last execution.
      */
     protected boolean isLastExecute() {
         return getLimit() - getCounter() < 2;
     }
 
-    /**
-     * Реинициализация задачи.
-     */
-    public void reinit() {
-        setCounter(0);
+    @Override
+    public void free() {
+        this.counter = 0;
     }
 }

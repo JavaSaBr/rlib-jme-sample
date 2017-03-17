@@ -1,36 +1,39 @@
 package org.sample.client;
 
-import org.lwjgl.LWJGLException;
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.util.LocalObjects;
 
 /**
- * Модель игрового потока.
+ * The custom game thread.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class GameThread extends Thread {
 
+    /**
+     * The thread local objects.
+     */
+    @NotNull
     private final LocalObjects localObects;
 
     public GameThread() {
         this.localObects = new LocalObjects();
     }
 
-    public GameThread(final Runnable target) throws LWJGLException {
+    public GameThread(@NotNull final Runnable target) {
         super(target);
-
         this.localObects = new LocalObjects();
     }
 
-    public GameThread(final ThreadGroup group, final Runnable target, final String name) throws LWJGLException {
+    public GameThread(@NotNull final ThreadGroup group, @NotNull final Runnable target, @NotNull final String name) {
         super(group, target, name);
-
         this.localObects = new LocalObjects();
     }
 
     /**
-     * @return контейнер локальных объектов.
+     * @return the thread local objects..
      */
+    @NotNull
     public LocalObjects getLocalObects() {
         return localObects;
     }

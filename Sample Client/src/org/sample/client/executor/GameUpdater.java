@@ -7,19 +7,19 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public interface GameExecutor<T> {
+public interface GameUpdater<T> {
 
     /**
-     * Add a new object to execute.
+     * Add a new object to updating.
      *
      * @param object the new object.
      */
-    void execute(@NotNull T object);
+    void addToUpdating(@NotNull T object);
 
     /**
-     * Remove an object from executing.
+     * Remove an object from updating.
      *
      * @param object the object to remove.
      */
-    void remove(@NotNull T object);
+    void removeFromUpdating(@NotNull T object);
 }

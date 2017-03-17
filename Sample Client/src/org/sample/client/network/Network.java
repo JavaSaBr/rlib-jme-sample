@@ -64,7 +64,7 @@ public final class Network {
      */
     public void connectToServer() {
 
-        final InetSocketAddress targetAddress = Config.SERVER_SOCKER_ADDRESS;
+        final InetSocketAddress targetAddress = Config.SERVER_SOCKET_ADDRESS;
 
         LOGGER.info(this, "connect to server " + targetAddress);
 

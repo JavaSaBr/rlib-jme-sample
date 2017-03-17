@@ -1,5 +1,6 @@
 package org.sample.client.config;
 
+import static java.lang.Math.max;
 import com.jme3.asset.AssetEventListener;
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.TextureKey;
@@ -11,16 +12,14 @@ import java.awt.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import static java.lang.Math.max;
-
 /**
- * Набор настроек, изменяемых пользователем во время игры.
+ * The user fame configuration.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class GameConfig implements AssetEventListener {
 
-    public static final String GAME_NAME = "Sample Game";;
+    public static final String GAME_NAME = "Sample Game";
     public static final String SOUND_ALIAS = "Sound";
     public static final String GRAPHICS_ALIAS = "Graphics";
 

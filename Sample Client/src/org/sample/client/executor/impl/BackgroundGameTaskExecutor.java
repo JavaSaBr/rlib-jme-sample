@@ -1,34 +1,32 @@
 package org.sample.client.executor.impl;
 
-import org.sample.client.SampleGame;
+import static java.lang.Math.min;
+import static org.sample.client.SampleGame.getCurrentTime;
+import org.jetbrains.annotations.NotNull;
 import org.sample.client.game.task.GameTask;
 import org.sample.client.util.LocalObjects;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.util.array.Array;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static java.lang.Math.min;
-
 /**
- * Реализация исполнителья фоновых игровых задач.
+ * The implementation of an executor to execute background tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class BackgroundGameTaskExecutor extends AbstractGameTaskExecutor {
 
     /**
-     * Рантайм.
+     * The runtime.
      */
     private static final Runtime RUNTIME = Runtime.getRuntime();
 
     /**
-     * Максимум обновляемых задач за проход.
+     * The max task count to execute per an iteration.
      */
     private static final int PROP_MAXIMUM_UPDATE = 500 / RUNTIME.availableProcessors();
 
     /**
-     * Лимит выполнений задач за одну фазу.
+     * The execute limit of task which uses the same current time.
      */
     private static final int PROP_EXECUTE_LIMIT = 5;
 
@@ -39,17 +37,18 @@ public class BackgroundGameTaskExecutor extends AbstractGameTaskExecutor {
     }
 
     /**
-     * Процесс обновления состояния задач.
+     * Execute tasks.
      */
-    protected void doUpdate(final Array<GameTask> execute, final Array<GameTask> executed, final LocalObjects local) {
+    protected void execute(@NotNull final Array<GameTask> execute, @NotNull final Array<GameTask> executed,
+                           @NotNull final LocalObjects local) {
 
         final GameTask[] array = execute.array();
 
         for (int i = 0, length = min(execute.size(), PROP_MAXIMUM_UPDATE); i < length; ) {
 
-            final long currentTime = SampleGame.getCurrentTime();
+            final long currentTime = getCurrentTime();
 
-            for (int count = 0, limit = PROP_EXECUTE_LIMIT; count < limit && i < length; count++, i++) {
+            for (int count = 0; count < PROP_EXECUTE_LIMIT && i < length; count++, i++) {
 
                 final GameTask task = array[i];
 
@@ -68,9 +67,8 @@ public class BackgroundGameTaskExecutor extends AbstractGameTaskExecutor {
         final Array<GameTask> waitTasks = getWaitTasks();
 
         final LocalObjects local = getLocalObects();
-        final AtomicBoolean wait = getWait();
 
-        while (true) {
+        for(;;) {
 
             executed.clear();
             execute.clear();
@@ -100,8 +98,7 @@ public class BackgroundGameTaskExecutor extends AbstractGameTaskExecutor {
                 continue;
             }
 
-            // обновление состояния задач
-            doUpdate(execute, executed, local);
+            execute(execute, executed, local);
 
             if (executed.isEmpty()) {
                 continue;

@@ -1,39 +1,49 @@
 package org.sample.client;
 
+import static java.util.Objects.requireNonNull;
 import com.jme3.system.AppSettings;
+import com.jme3.system.NativeLibraryLoader;
 import com.jme3.system.lwjgl.LwjglDisplay;
-import org.lwjgl.LWJGLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Модель контекста игры.
+ * The render context.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class GameContext extends LwjglDisplay {
 
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(GameContext.class);
 
     /**
-     * Игровой поток рендера экрана.
+     * The game thread.
      */
+    @Nullable
     private GameThread thread;
 
     @Override
     public void create(final boolean waitFor) {
 
+        if ("LWJGL".equals(settings.getAudioRenderer())) {
+            NativeLibraryLoader.loadNativeLibrary("openal-lwjgl3", true);
+        }
+
+        NativeLibraryLoader.loadNativeLibrary("lwjgl3", true);
+        NativeLibraryLoader.loadNativeLibrary("glfw-lwjgl3", true);
+        NativeLibraryLoader.loadNativeLibrary("jemalloc-lwjgl3", true);
+        NativeLibraryLoader.loadNativeLibrary("jinput", true);
+        NativeLibraryLoader.loadNativeLibrary("jinput-dx8", true);
+
         if (created.get()) {
             return;
         }
 
-        try {
-            thread = new GameThread(this);
-            thread.setPriority(Thread.MAX_PRIORITY);
-        } catch (final LWJGLException e) {
-            LOGGER.warning(e);
-        }
-
+        thread = new GameThread(this);
+        thread.setPriority(Thread.MAX_PRIORITY);
         thread.setName("LWJGL Renderer Thread");
         thread.start();
 
@@ -43,15 +53,16 @@ public final class GameContext extends LwjglDisplay {
     }
 
     /**
-     * @return игровой поток рендера экрана.
+     * @return the custom game thread.
      */
+    @NotNull
     public GameThread getThread() {
-        return thread;
+        return requireNonNull(thread);
     }
 
     @Override
-    protected void initContextFirstTime() {
+    protected void createContext(final AppSettings settings) {
         settings.setRenderer(AppSettings.LWJGL_OPENGL3);
-        super.initContextFirstTime();
+        super.createContext(settings);
     }
 }
