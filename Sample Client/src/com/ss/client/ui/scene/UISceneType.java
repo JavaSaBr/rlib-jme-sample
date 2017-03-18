@@ -15,7 +15,8 @@ import rlib.util.ClassUtils;
 public enum UISceneType {
     LOGIN_SCENE(LoginUISceneBuilder.class),
     HANGAR_SCENE(EmptyUISceneBuilder.class),
-    GAME_SCENE(EmptyUISceneBuilder.class);
+    GAME_SCENE(EmptyUISceneBuilder.class),
+    EMPTY_SCENE(EmptyUISceneBuilder.class);
 
     /**
      * The implementation of UI scene builder.

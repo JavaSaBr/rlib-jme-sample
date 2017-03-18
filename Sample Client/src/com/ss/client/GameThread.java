@@ -2,7 +2,6 @@ package com.ss.client;
 
 import com.ss.client.util.LocalObjects;
 import org.jetbrains.annotations.NotNull;
-import com.ss.client.util.LocalObjects;
 
 /**
  * The custom game thread.

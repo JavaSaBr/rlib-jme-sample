@@ -1,5 +1,6 @@
 package com.ss.client;
 
+import static java.util.Objects.requireNonNull;
 import com.jme3.app.SimpleApplication;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.audio.Environment;
@@ -16,18 +17,16 @@ import com.ss.client.config.GameConfig;
 import com.ss.client.config.ScreenSize;
 import com.ss.client.executor.impl.GameThreadExecutor;
 import com.ss.client.game.task.SwitchStateTask;
-import com.ss.client.jme.post.PostEffect;
-import com.ss.client.jme.post.effect.BloomEffect;
-import com.ss.client.jme.post.effect.FXAAEffect;
 import com.ss.client.manager.ExecutorManager;
 import com.ss.client.manager.GameTaskManager;
 import com.ss.client.manager.UpdateObjectManager;
 import com.ss.client.model.impl.UserAccount;
 import com.ss.client.network.Network;
 import com.ss.client.stage.StageType;
-import com.ss.client.ui.util.UIUtils;
 import com.sun.javafx.cursor.CursorType;
 import javafx.application.Platform;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
@@ -35,8 +34,6 @@ import rlib.logging.LoggerLevel;
 import rlib.logging.LoggerManager;
 import rlib.logging.impl.FolderFileListener;
 import rlib.manager.InitializeManager;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,30 +43,28 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.logging.Level;
 
 /**
- * Инициализирующий класс игры.
+ * The main class of the game.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SampleGame extends SimpleApplication {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(SampleGame.class);
 
+    @NotNull
     private static final SampleGame GAME = new SampleGame();
 
+    @NotNull
     public static SampleGame getInstance() {
         return GAME;
     }
 
-    public static void start(final String[] args) throws IOException {
+    static void start(@NotNull final String[] args) throws IOException {
 
-        // фикс рендера шрифтов в FX
+        // fix font render
         System.setProperty("prism.lcdtext", "false");
         System.setProperty("prism.text", "t2k");
-
-        // настройки для JavaFX
-        System.setProperty("prism.vsync", "true");
-        System.setProperty("javafx.animation.fullspeed", "false");
-        System.setProperty("prism.cacheshapes", "true");
 
         Config.init();
         CommandLineConfig.args(args);
@@ -96,12 +91,12 @@ public class SampleGame extends SimpleApplication {
         }
     }
 
-    protected static void configureLogger() {
+    private static void configureLogger() {
 
-        // выключаем стандартный логгер
+        // disable default logger
         java.util.logging.Logger.getLogger("").setLevel(Level.SEVERE);
 
-        // настраиваем логгер
+        // configure logger from rlib
         LoggerLevel.DEBUG.setEnabled(false);
         LoggerLevel.INFO.setEnabled(true);
         LoggerLevel.ERROR.setEnabled(true);
@@ -120,84 +115,91 @@ public class SampleGame extends SimpleApplication {
         LoggerManager.addListener(new FolderFileListener(logFolder));
     }
 
-    public static final long getCurrentTime() {
+    /**
+     * @return the current time.
+     */
+    public static long getCurrentTime() {
         return System.currentTimeMillis();
     }
 
     /**
-     * Список пост эффектов в игре.
+     * The synchronizer.
      */
-    private final Array<PostEffect> postEffects;
-
-    /**
-     * Синхронизатор.
-     */
+    @NotNull
     private final StampedLock lock;
 
     /**
-     * Аккаунт пользователя.
+     * the user account.
      */
+    @NotNull
     private final UserAccount userAccount;
 
     /**
-     * Счетчик ожидающих потоков для обновлениния геометрии.
+     * The count of waited updaters to update geometries.
      */
-    private final AtomicInteger waitUpdateGeometrySync;
+    @NotNull
+    private final AtomicInteger waitedUpdatersGeometriesCount;
 
     /**
-     * Счетчик исполняющих потоков обновления геометрии.
+     * The count of started updaters to update geometries.
      */
-    private final AtomicInteger executeUpdateGeometrySync;
+    @NotNull
+    private final AtomicInteger startedUpdatersGeometriesCount;
 
     /**
-     * Синхронизатор ожидания.
+     * The wait state.
      */
+    @NotNull
     private final AtomicInteger waitState;
 
     /**
-     * Остановлена ли отрисовка сцены.
+     * The flat of stopping scene render.
      */
+    @NotNull
     private final AtomicInteger stopSceneRender;
 
     /**
-     * Предыдущая стадия игры.
+     * The prev stage of the game.
      */
+    @Nullable
     private volatile StageType prevStage;
 
     /**
-     * Текущая стадия игры.
+     * The current stage of the game.
      */
+    @Nullable
     private volatile StageType currentStage;
 
     /**
-     * Следующая стадия игры.
+     * The next stage of the game.
      */
+    @Nullable
     private volatile StageType nextStage;
 
     /**
-     * Контейнер UI JavaFX.
+     * The javaFX container.
      */
+    @Nullable
     private JmeFxContainer fxContainer;
 
     private SampleGame() {
-        this.postEffects = ArrayFactory.newArray(PostEffect.class);
         this.userAccount = new UserAccount();
         this.lock = new StampedLock();
-        this.waitUpdateGeometrySync = new AtomicInteger();
-        this.executeUpdateGeometrySync = new AtomicInteger();
+        this.waitedUpdatersGeometriesCount = new AtomicInteger();
+        this.startedUpdatersGeometriesCount = new AtomicInteger();
         this.waitState = new AtomicInteger();
         this.stopSceneRender = new AtomicInteger();
     }
 
     /**
-     * Блокировка рендера для каких-то асинхронных действий.
+     * Async lock rendering to do something.
      */
     public final long asyncLock() {
         return lock.readLock();
     }
 
     /**
-     * Разблокировка рендера.
+     * Async unlock rendering.
      */
     public final void asyncUnlock(final long stamp) {
         lock.unlockRead(stamp);
@@ -210,8 +212,9 @@ public class SampleGame extends SimpleApplication {
     }
 
     /**
-     * @return аккаунт пользователя.
+     * @return the user account.
      */
+    @NotNull
     public final UserAccount getUserAccount() {
         return userAccount;
     }
@@ -222,100 +225,71 @@ public class SampleGame extends SimpleApplication {
     }
 
     /**
-     * @return текущая стадия игры.
+     * @return the current stage of the game.
      */
+    @Nullable
     public final StageType getCurrentStage() {
         return currentStage;
     }
 
     /**
-     * @param currentStage текущая стадия игры.
+     * @param currentStage the current stage of the game.
      */
-    public final void setCurrentStage(final StageType currentStage) {
+    public final void setCurrentStage(@Nullable final StageType currentStage) {
         this.currentStage = currentStage;
     }
 
     /**
-     * @return счетчик исполняющих потоков обновления геометрии.
+     * @return the javaFX container.
      */
-    public AtomicInteger getExecuteUpdateGeometrySync() {
-        return executeUpdateGeometrySync;
-    }
-
-    /**
-     * @return контейнер UI JavaFX.
-     */
+    @Nullable
     public JmeFxContainer getFxContainer() {
         return fxContainer;
     }
 
     /**
-     * @return следующая стадия игры.
+     * @return the next stage of the game.
      */
+    @Nullable
     public StageType getNextStage() {
         return nextStage;
     }
 
     /**
-     * @param nextStage следующая стадия игры.
+     * @param nextStage the next stage of the game.
      */
-    public void setNextStage(StageType nextStage) {
+    public void setNextStage(@Nullable final StageType nextStage) {
         this.nextStage = nextStage;
     }
 
     /**
-     * @return список пост эффектов в игре.
+     * @return the prev stage of the game.
      */
-    public Array<PostEffect> getPostEffects() {
-        return postEffects;
-    }
-
-    /**
-     * @return предыдущая стадия игры.
-     */
+    @Nullable
     public StageType getPrevStage() {
         return prevStage;
     }
 
     /**
-     * @param prevStage предыдущая стадия игры.
+     * @param prevStage the prev stage of the game.
      */
-    public void setPrevStage(StageType prevStage) {
+    public void setPrevStage(@Nullable final StageType prevStage) {
         this.prevStage = prevStage;
     }
 
     /**
-     * @return синхронизатор ожидания.
-     */
-    public AtomicInteger getWaitState() {
-        return waitState;
-    }
-
-    /**
-     * @return счетчик ожидающих потоков для обновлениния геометрии.
-     */
-    public AtomicInteger getWaitUpdateGeometrySync() {
-        return waitUpdateGeometrySync;
-    }
-
-    /**
-     * Переходим на указанную стадию.
+     * Go to the stage.
      *
-     * @param stageType ид стадии игры.
+     * @param stageType the new stage.
      */
-    public void gotoStage(final StageType stageType) {
-
-        if (getCurrentStage() == stageType) {
-            return;
-        }
-
+    public void gotoStage(@NotNull final StageType stageType) {
+        if (getCurrentStage() == stageType) return;
         setNextStage(stageType);
-
         Platform.runLater(new SwitchStateTask(stageType));
     }
 
     /**
-     * @return остановлена ли отрисовка сцены.
+     * @return true if the scene render was stopped.
      */
     public boolean isStoppedSceneRender() {
         return stopSceneRender.get() > 0;
@@ -325,8 +299,8 @@ public class SampleGame extends SimpleApplication {
     public void restart() {
 
         final JmeFxContainer fxContainer = getFxContainer();
-        final AtomicInteger waitCount = fxContainer.getWaitCount();
-        waitCount.incrementAndGet();
+        //TODO final AtomicInteger waitCount = fxContainer.getWaitCount();
+        //waitCount.incrementAndGet();
 
         super.restart();
     }
@@ -339,7 +313,6 @@ public class SampleGame extends SimpleApplication {
         LOGGER.info(this, "OS: " + system.getDistribution());
 
         final AudioRenderer audioRenderer = getAudioRenderer();
-        // Так указывается окружение для звуков
         audioRenderer.setEnvironment(new Environment(Environment.Garage));
 
         final Node guiNode = getGuiNode();
@@ -353,7 +326,6 @@ public class SampleGame extends SimpleApplication {
 
         final GameConfig config = GameConfig.getInstance();
 
-        // устанавливаем нужный нам обзор в 40 градусов
         cam.setFrustumPerspective(40, (float) cam.getWidth() / cam.getHeight(), 1f, config.getViewDistance());
 
         flyCam.setDragToRotate(true);
@@ -364,12 +336,6 @@ public class SampleGame extends SimpleApplication {
 
         viewPort.addProcessor(postProcessor);
 
-        final Array<PostEffect> postEffects = getPostEffects();
-        postEffects.add(BloomEffect.bind(postProcessor));
-        postEffects.add(FXAAEffect.bind(postProcessor));
-
-        UIUtils.overrideTooltipBehavior(100, 5000, 0);
-
         ExecutorManager.getInstance();
 
         InitializeManager.register(GameTaskManager.class);
@@ -377,79 +343,57 @@ public class SampleGame extends SimpleApplication {
         InitializeManager.register(Network.class);
         InitializeManager.initialize();
 
-        fxContainer = JmeFxContainer.install(this, guiNode, true, cursorDisplayProvider);
+        fxContainer = JmeFxContainer.install(this, guiNode, cursorDisplayProvider);
 
         gotoStage(StageType.LOGIN_STAGE);
     }
 
     /**
-     * Блокировать синхронизированную область.
+     * Sync lock rendering to do something.
      */
     public final long syncLock() {
         return lock.writeLock();
     }
 
     /**
-     * Разблокировать синхронизированную область.
+     * Sync unlock rendering.
      */
     public final void syncUnlock(final long stamp) {
         lock.unlockWrite(stamp);
     }
 
     /**
-     * Попытка произвести синхронизирующую блокировку.
+     * Notify about finished updating geometries from other thread.
      */
-    public long trySyncLock() {
-        return lock.tryWriteLock();
-    }
-
-    /**
-     * Уведомлпение о завершении обновлении геометрии.
-     */
-    public void updateGeomEnd() {
-
-        final AtomicInteger executeUpdateGeometrySync = getExecuteUpdateGeometrySync();
-
-        if (executeUpdateGeometrySync.decrementAndGet() == 0) {
-            ConcurrentUtils.notifyAll(getWaitState());
+    public void finishUpdateGeometries() {
+        if (startedUpdatersGeometriesCount.decrementAndGet() == 0) {
+            ConcurrentUtils.notifyAll(waitState);
         }
     }
 
     /**
-     * Ожидание возможности начать обновлять геометрию.
+     * Notify about started updating geometries from other thread.
      */
-    public void updateGeomStart() {
-
-        final AtomicInteger waitUpdateGeometrySync = getWaitUpdateGeometrySync();
-
-        synchronized (waitUpdateGeometrySync) {
-            waitUpdateGeometrySync.incrementAndGet();
-            ConcurrentUtils.waitInSynchronize(waitUpdateGeometrySync);
+    public void startUpdateGeometries() {
+        synchronized (waitedUpdatersGeometriesCount) {
+            waitedUpdatersGeometriesCount.incrementAndGet();
+            ConcurrentUtils.waitInSynchronize(waitedUpdatersGeometriesCount);
         }
     }
 
     @Override
     public void update() {
 
-        final JmeFxContainer fxContainer = getFxContainer();
-
-        final AtomicInteger waitUpdateGeometrySync = getWaitUpdateGeometrySync();
-        final AtomicInteger executeUpdateGeometrySync = getExecuteUpdateGeometrySync();
-        final AtomicInteger waitState = getWaitState();
+        final JmeFxContainer fxContainer = requireNonNull(getFxContainer());
 
         synchronized (waitState) {
-
-            if (waitUpdateGeometrySync.get() > 0) {
-
-                synchronized (waitUpdateGeometrySync) {
-                    executeUpdateGeometrySync.getAndSet(waitUpdateGeometrySync.getAndSet(0));
-                    ConcurrentUtils.notifyAllInSynchronize(waitUpdateGeometrySync);
+            if (waitedUpdatersGeometriesCount.get() > 0) {
+                synchronized (waitedUpdatersGeometriesCount) {
+                    startedUpdatersGeometriesCount.getAndSet(waitedUpdatersGeometriesCount.getAndSet(0));
+                    ConcurrentUtils.notifyAllInSynchronize(waitedUpdatersGeometriesCount);
                 }
-
                 ConcurrentUtils.waitInSynchronize(waitState, 10000);
             }
-
-            //TODO здесь надо обновлять камеру
         }
 
         final long stamp = syncLock();

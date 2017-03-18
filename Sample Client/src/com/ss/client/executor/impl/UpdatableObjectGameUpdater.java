@@ -113,7 +113,7 @@ public class UpdatableObjectGameUpdater extends GameThread implements Lockable, 
         long time;
 
         for (int i = 0, length = update.size(); i < length; ) {
-            game.updateGeomStart();
+            game.startUpdateGeometries();
             try {
 
                 time = SampleGame.getCurrentTime();
@@ -130,7 +130,7 @@ public class UpdatableObjectGameUpdater extends GameThread implements Lockable, 
             } catch (final Exception e) {
                 LOGGER.warning(e);
             } finally {
-                game.updateGeomEnd();
+                game.finishUpdateGeometries();
             }
         }
     }

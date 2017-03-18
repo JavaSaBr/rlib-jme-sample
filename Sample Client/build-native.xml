@@ -2,7 +2,7 @@
 <project name="jME SpaceShift Editor" default="do-deploy" basedir="build"
          xmlns:fx="javafx:com.sun.javafx.tools.ant">
 
-    <property name="editor.version" value="0.9.6" />
+    <property name="game.version" value="0.1.0" />
 
     <target name="init-fx-tasks">
         <path id="fxant">
@@ -32,29 +32,8 @@
             </fileset>
         </copy>
 
-        <copy todir="externalLibs/extensions">
-            <fileset dir="../libs/extensions" >
-                <include name="**/*sources*"/>
-                <include name="**/*javadoc*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="externalLibs/extensions/xbuf">
-            <fileset dir="../libs/extensions/xbuf" >
-                <include name="**/*sources*"/>
-                <include name="**/*javadoc*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="externalLibs/extensions/simsilica">
-            <fileset dir="../libs/extensions/simsilica" >
-                <include name="**/*sources*"/>
-                <include name="**/*javadoc*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="externalLibs/extensions/toneg0d">
-            <fileset dir="../libs/extensions/toneg0d" >
+        <copy todir="externalLibs/jME">
+            <fileset dir="../libs/jME" >
                 <include name="**/*sources*"/>
                 <include name="**/*javadoc*"/>
             </fileset>
@@ -103,24 +82,6 @@
                 <fileset dir="build/libs/jME">
                     <include name="*"/>
                 </fileset>
-                <fileset dir="build/libs/svg">
-                    <include name="*"/>
-                </fileset>
-                <fileset dir="build/libs/http">
-                    <include name="*"/>
-                </fileset>
-                <fileset dir="build/libs/extensions">
-                    <include name="*"/>
-                </fileset>
-                <fileset dir="build/libs/extensions/xbuf">
-                    <include name="*"/>
-                </fileset>
-                <fileset dir="build/libs/extensions/toneg0d">
-                    <include name="*"/>
-                </fileset>
-                <fileset dir="build/libs/extensions/simsilica">
-                    <include name="*"/>
-                </fileset>
             </classpath>
         </javac>
 
@@ -155,76 +116,34 @@
             </fileset>
         </copy>
 
-        <copy todir="dist/libs/svg">
-            <fileset dir="externalLibs/svg">
-                <include name="*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="dist/libs/http">
-            <fileset dir="externalLibs/http">
-                <include name="*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="dist/libs/extensions">
-            <fileset dir="externalLibs/extensions">
-                <include name="*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="dist/libs/extensions/xbuf">
-            <fileset dir="externalLibs/extensions/xbuf">
-                <include name="*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="dist/libs/extensions/toneg0d">
-            <fileset dir="externalLibs/extensions/toneg0d">
-                <include name="*"/>
-            </fileset>
-        </copy>
-
-        <copy todir="dist/libs/extensions/simsilica">
-            <fileset dir="externalLibs/extensions/simsilica">
-                <include name="*"/>
-            </fileset>
-        </copy>
-
         <fx:resources id="appRes">
-            <fx:fileset dir="dist" includes="jme3-spaceshift-editor.jar"/>
+            <fx:fileset dir="dist" includes="sample-game.jar"/>
             <fx:fileset dir="dist" includes="libs/*"/>
             <fx:fileset dir="dist" includes="libs/jME/*"/>
-            <fx:fileset dir="dist" includes="libs/svg/*"/>
-            <fx:fileset dir="dist" includes="libs/http/*"/>
-            <fx:fileset dir="dist" includes="libs/extensions/*"/>
-            <fx:fileset dir="dist" includes="libs/extensions/xbuf/*"/>
-            <fx:fileset dir="dist" includes="libs/extensions/toneg0d/*"/>
-            <fx:fileset dir="dist" includes="libs/extensions/simsilica/*"/>
             <fx:fileset dir="package"/>
         </fx:resources>
 
         <fx:application id="fxApplication"
-                        name="jME3-SpaceShift-Editor"
-                        mainClass="com.ss.editor.JFXApplication"
+                        name="RLib-jME-Sample"
+                        mainClass="com.ss.client.Starter"
                         toolkit="fx"
-                        version="${editor.version}" />
+                        version="${game.version}" />
 
         <mkdir dir="build/classes/META-INF"/>
 
-        <fx:jar destfile="dist/jme3-spaceshift-editor.jar">
+        <fx:jar destfile="dist/sample-game.jar">
             <fx:application refid="fxApplication"/>
             <fileset dir="build/classes"/>
             <fx:resources refid="appRes"/>
 
             <manifest>
                 <attribute name="Implementation-Vendor" value="spaceshift.ru"/>
-                <attribute name="Implementation-Title" value="jME3 SpaceShift Editor"/>
-                <attribute name="Implementation-Version" value="${editor.version}"/>
+                <attribute name="Implementation-Title" value="RLib-jME-Sample"/>
+                <attribute name="Implementation-Version" value="${game.version}"/>
             </manifest>
         </fx:jar>
 
-        <replace file="package/linux/control" token="@version@" value="${editor.version}"/>
+        <replace file="package/linux/control" token="@version@" value="${game.version}"/>
 
         <mkdir dir="deploy"/>
         <!-- Need to use ${basedir} because somehow the ant task is calculating the directory differently -->
@@ -234,7 +153,7 @@
                 includeDT="false"
                 offlineAllowed="true"
                 outdir="${basedir}/deploy"
-                outfile="jME3 SpaceShift Editor" nativeBundles="all"
+                outfile="RLib-jME-Sample" nativeBundles="all"
                 updatemode="background" verbose="true">
 
             <fx:platform >
@@ -252,13 +171,13 @@
 
             <preferences shortcut="true" menu="true" install="false" />
 
-            <info category="graphics" copyright="spaceshift.ru" description="Editor for jMonkeyEngine 3 by SpaceShift Team"
-                  email="javasabr@gmail.com" license="Freeware" title="jME3 SpaceShift Editor" vendor="spaceshift.ru"/>
+            <info category="game" copyright="spaceshift.ru" description="RLib-jME-Sample"
+                  email="javasabr@gmail.com" license="Freeware" title="RLib-jME-Sample" vendor="spaceshift.ru"/>
 
             <application refId="fxApplication"/>
             <resources refid="appRes"/>
         </fx:deploy>
 
-        <replace file="package/linux/control" token="${editor.version}" value="@version@"/>
+        <replace file="package/linux/control" token="${game.version}" value="@version@"/>
     </target>
 </project>

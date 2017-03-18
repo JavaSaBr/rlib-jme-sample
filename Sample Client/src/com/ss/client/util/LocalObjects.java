@@ -5,145 +5,99 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.ss.client.GameThread;
+import org.jetbrains.annotations.NotNull;
+import rlib.util.CycleBuffer;
 
 /**
- * Контейнер локальных объектов.
+ * The thread local container of local objects.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class LocalObjects {
 
     private static final int SIZE = 20;
-    private static final int LIMIT = SIZE - 1;
 
-    public static final LocalObjects get() {
+    @NotNull
+    public static LocalObjects get() {
         return ((GameThread) Thread.currentThread()).getLocalObects();
     }
 
     /**
-     * Буффер векторов.
+     * The vectors buffer.
      */
-    private final Vector3f[] vectorBuffer;
+    @NotNull
+    private final CycleBuffer<Vector3f> vectorBuffer;
 
     /**
-     * Буфер кватернионов.
+     * The quaternions buffer.
      */
-    private final Quaternion[] rotationBuffer;
+    @NotNull
+    private final CycleBuffer<Quaternion> rotationBuffer;
 
     /**
-     * Буфер лучей.
+     * The rays buffer.
      */
-    private final Ray[] rayBuffer;
+    @NotNull
+    private final CycleBuffer<Ray> rayBuffer;
 
     /**
-     * Буффер матриц 3f.
+     * The matrixes buffer.
      */
-    private final Matrix3f[] matrix3fBuffer;
+    @NotNull
+    private final CycleBuffer<Matrix3f> matrix3fBuffer;
 
     /**
-     * Буффер массивов данных матриц.
+     * The matrix float arrays buffer.
      */
-    private final float[][] matrixFloatBuffer;
-
-    /**
-     * Индекс след. свободного вектора.
-     */
-    private int vectorIndex;
-
-    /**
-     * Иднекс след. свободного кватерниона.
-     */
-    private int rotationIndex;
-
-    /**
-     * Индекс следующего луча.
-     */
-    private int rayIndex;
-
-    /**
-     * Индекс следующей матрицы.
-     */
-    private int matrix3fIndex;
-
-    /**
-     * Индекс следующего массива данных матрицы.
-     */
-    private int matrixFloatIndex;
+    @NotNull
+    private final CycleBuffer<float[]> matrixFloatBuffer;
 
     @SuppressWarnings("unchecked")
     public LocalObjects() {
-        this.vectorBuffer = new Vector3f[SIZE];
-        this.rotationBuffer = new Quaternion[SIZE];
-        this.rayBuffer = new Ray[SIZE];
-        this.matrix3fBuffer = new Matrix3f[SIZE];
-        this.matrixFloatBuffer = new float[SIZE][];
-
-        for (int i = 0, length = SIZE; i < length; i++) {
-            rotationBuffer[i] = new Quaternion();
-            vectorBuffer[i] = new Vector3f();
-            rayBuffer[i] = new Ray();
-            matrix3fBuffer[i] = new Matrix3f();
-            matrixFloatBuffer[i] = new float[16];
-        }
+        this.vectorBuffer = new CycleBuffer<>(Vector3f.class, SIZE, Vector3f::new);
+        this.rotationBuffer = new CycleBuffer<>(Quaternion.class, SIZE, Quaternion::new);
+        this.rayBuffer = new CycleBuffer<>(Ray.class, SIZE, Ray::new);
+        this.matrix3fBuffer = new CycleBuffer<>(Matrix3f.class, SIZE, Matrix3f::new);
+        this.matrixFloatBuffer = new CycleBuffer<>(float[].class, SIZE, () -> new float[16]);
     }
 
     /**
-     * @return получаем след. свободную матрицу 3f.
+     * @return the next free matrix.
      */
-    public Matrix3f getNextMatrix3f() {
-
-        if (matrix3fIndex == LIMIT) {
-            matrix3fIndex = 0;
-        }
-
-        return matrix3fBuffer[matrix3fIndex++];
+    @NotNull
+    public Matrix3f nextMatrix3f() {
+        return matrix3fBuffer.next();
     }
 
     /**
-     * @return получаем след. массив данных матрицы.
+     * @return the next free matrix array.
      */
-    public float[] getNextMatrixFloat() {
-
-        if (matrixFloatIndex == LIMIT) {
-            matrixFloatIndex = 0;
-        }
-
-        return matrixFloatBuffer[matrixFloatIndex++];
+    @NotNull
+    public float[] nextFloatMatrix16F() {
+        return matrixFloatBuffer.next();
     }
 
     /**
-     * @return получаем след. свободного луча.
+     * @return the next free ray.
      */
-    public Ray getNextRay() {
-
-        if (rayIndex == LIMIT) {
-            rayIndex = 0;
-        }
-
-        return rayBuffer[rayIndex++];
+    @NotNull
+    public Ray nextRay() {
+        return rayBuffer.next();
     }
 
     /**
-     * @return получаем след. свободный квантернион.
+     * @return the next free quaternion.
      */
-    public Quaternion getNextRotation() {
-
-        if (rotationIndex == LIMIT) {
-            rotationIndex = 0;
-        }
-
-        return rotationBuffer[rotationIndex++];
+    @NotNull
+    public Quaternion nextRotation() {
+        return rotationBuffer.next();
     }
 
     /**
-     * @return получаем след. свободнвый вектор.
+     * @return the next free vector.
      */
-    public Vector3f getNextVector() {
-
-        if (vectorIndex == LIMIT) {
-            vectorIndex = 0;
-        }
-
-        return vectorBuffer[vectorIndex++];
+    @NotNull
+    public Vector3f nextVector() {
+        return vectorBuffer.next();
     }
 }

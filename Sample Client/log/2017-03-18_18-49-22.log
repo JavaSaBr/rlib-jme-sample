@@ -1,0 +1,8 @@
+INFO 18:49:22:619 SampleGame: address of server localhost/127.0.0.1:1000
+INFO 18:49:23:517 SampleGame: OS: Ubuntu 16.04.2 LTS (xenial)
+INFO 18:49:23:564 GameTaskManager: initialized.
+INFO 18:49:23:568 ServerPacketType: server packets prepared.
+INFO 18:49:23:569 ClientPacketType: client packets prepared.
+INFO 18:49:23:577 Network: connect to server localhost/127.0.0.1:1000
+INFO 18:49:23:579 Network: initialized.
+INFO 18:49:23:579 GameConnectHandler: невозможно подключиться.

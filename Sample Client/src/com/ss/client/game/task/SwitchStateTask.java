@@ -1,22 +1,18 @@
 package com.ss.client.game.task;
 
+import static javafx.application.Platform.runLater;
 import com.jme3.app.state.AppStateManager;
 import com.jme3x.jfx.JmeFxContainer;
-import com.ss.client.stage.StageType;
-import com.ss.client.ui.scene.UIScene;
-import com.ss.client.ui.scene.UISceneType;
-import javafx.scene.Group;
 import com.ss.client.SampleGame;
 import com.ss.client.manager.ExecutorManager;
 import com.ss.client.stage.Stage;
 import com.ss.client.stage.StageType;
 import com.ss.client.ui.scene.UIScene;
 import com.ss.client.ui.scene.UISceneType;
+import javafx.scene.Group;
 import rlib.concurrent.util.ThreadUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-
-import static javafx.application.Platform.runLater;
 
 /**
  * Реализация задачи по смене стадии игры.
@@ -41,11 +37,6 @@ public class SwitchStateTask implements Runnable {
     private void activateNewScene(final JmeFxContainer fxContainer, final UIScene currentScene, final Stage targetStage) {
 
         final UISceneType fxState = targetStage.getUISceneType();
-
-        if (fxState == null) {
-            return;
-        }
-
         final UIScene scene = fxState.getScene();
 
         if (scene == null) {
