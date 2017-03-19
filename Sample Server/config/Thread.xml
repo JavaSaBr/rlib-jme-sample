@@ -1,13 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <list>
-	<!-- кол-во потоков для исполнения основных задач -->
 	<set name="Thread.executorGeneralSize" value="2" />
-	<!-- кол-во потоков для исполнения секторных задач -->
-	<set name="Thread.executorSectorSize" value="2" />
-	<!-- кол-во потоков для исполнения локационных задач -->
-	<set name="Thread.executorLocationSize" value="2" />
-	<!-- кол-во потоков для исполнения пакетных задач -->
 	<set name="Thread.executorPacketSize" value="2" />
-	<!-- кол-во потоков для исполнения обновления объектов -->
-	<set name="Thread.executorUpdateObjectSize" value="3" />
 </list>    
