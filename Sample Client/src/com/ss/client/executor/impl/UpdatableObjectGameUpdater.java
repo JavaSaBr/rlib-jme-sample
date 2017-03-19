@@ -2,7 +2,7 @@ package com.ss.client.executor.impl;
 
 import org.jetbrains.annotations.NotNull;
 import com.ss.client.GameThread;
-import com.ss.client.SampleGame;
+import com.ss.client.GameClient;
 import com.ss.client.executor.GameUpdater;
 import com.ss.client.model.util.UpdatableObject;
 import com.ss.client.util.LocalObjects;
@@ -82,7 +82,7 @@ public class UpdatableObjectGameUpdater extends GameThread implements Lockable, 
     /**
      * Finish objects.
      */
-    private void finish(@NotNull final Array<UpdatableObject> finished, @NotNull final SampleGame game) {
+    private void finish(@NotNull final Array<UpdatableObject> finished, @NotNull final GameClient game) {
 
         final UpdatableObject[] array = finished.array();
 
@@ -106,7 +106,7 @@ public class UpdatableObjectGameUpdater extends GameThread implements Lockable, 
      * Update game objects.
      */
     private void update(@NotNull final Array<UpdatableObject> update, @NotNull final Array<UpdatableObject> finished,
-                        @NotNull final LocalObjects local, @NotNull final SampleGame game) {
+                        @NotNull final LocalObjects local, @NotNull final GameClient game) {
 
         final UpdatableObject[] array = update.array();
 
@@ -116,7 +116,7 @@ public class UpdatableObjectGameUpdater extends GameThread implements Lockable, 
             game.startUpdateGeometries();
             try {
 
-                time = SampleGame.getCurrentTime();
+                time = GameClient.getCurrentTime();
 
                 for (int count = 0; count < UPDATE_LIMIT && i < length; count++, i++) {
 
@@ -213,7 +213,7 @@ public class UpdatableObjectGameUpdater extends GameThread implements Lockable, 
 
         final LocalObjects local = getLocalObects();
 
-        final SampleGame game = SampleGame.getInstance();
+        final GameClient game = GameClient.getInstance();
 
         for(;;) {
 

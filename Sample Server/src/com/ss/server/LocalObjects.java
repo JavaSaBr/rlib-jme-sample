@@ -1,7 +1,5 @@
 package com.ss.server;
 
-import com.ss.server.network.ServerPacket;
-import com.ss.server.network.ServerPacketFactory;
 import org.jetbrains.annotations.NotNull;
 import rlib.geom.Quaternion4f;
 import rlib.geom.Vector3f;
@@ -45,12 +43,6 @@ public final class LocalObjects implements Vector3fBuffer {
     }
 
     /**
-     * The server packet factory.
-     */
-    @NotNull
-    private final ServerPacketFactory packetFactory;
-
-    /**
      * The thread.
      */
     @NotNull
@@ -89,23 +81,11 @@ public final class LocalObjects implements Vector3fBuffer {
     public LocalObjects(@NotNull final Thread thread) {
         this.thread = thread;
         this.random = RandomFactory.newFastRandom();
-        this.packetFactory = new ServerPacketFactory();
         this.vectorsBuffer = new CycleBuffer<>(Vector3f.class, DEFAULT_BUFFER_SIZE, Vector3f::newInstance);
         this.quaternionsBuffer = new CycleBuffer<>(Quaternion4f.class, DEFAULT_BUFFER_SIZE, Quaternion4f::newInstance);
         this.vectorBuffersBuffer = new CycleBuffer<>(Vector3fBuffer.class, DEFAULT_BUFFER_SIZE, Vector3fBufferImpl::new);
         this.vectorListsBuffer = new CycleBuffer<>(Array.class, DEFAULT_BUFFER_SIZE,
                 () -> ArrayFactory.newArray(Vector3f.class), Collection::clear);
-    }
-
-    /**
-     * Create a new server packet of the same type as the packet.
-     *
-     * @param example the example of the server packet.
-     * @return the new packet.
-     */
-    @NotNull
-    public <R extends ServerPacket> R create(@NotNull final ServerPacket example) {
-        return packetFactory.create(example);
     }
 
     /**

@@ -1,12 +1,9 @@
 package com.ss.client.executor.impl;
 
-import com.ss.client.SampleGame;
+import com.ss.client.GameClient;
 import com.ss.client.game.task.GameTask;
 import com.ss.client.util.LocalObjects;
 import org.jetbrains.annotations.NotNull;
-import com.ss.client.SampleGame;
-import com.ss.client.game.task.GameTask;
-import com.ss.client.util.LocalObjects;
 import rlib.function.ObjectLongObjectConsumer;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
@@ -92,7 +89,7 @@ public class GameThreadExecutor {
             }
 
             final LocalObjects local = LocalObjects.get();
-            final long currentTime = SampleGame.getCurrentTime();
+            final long currentTime = GameClient.getCurrentTime();
 
             execute.forEach(currentTime, local, EXECUTE_FUNCTION);
 

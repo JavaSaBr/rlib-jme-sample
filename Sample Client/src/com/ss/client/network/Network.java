@@ -1,27 +1,36 @@
 package com.ss.client.network;
 
 import com.ss.client.config.Config;
+import com.ss.client.manager.ClassManager;
 import com.ss.client.network.model.GameConnectHandler;
-import com.ss.client.network.model.NetServer;
+import com.ss.client.network.model.GameServer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.manager.InitializeManager;
 import rlib.network.NetworkFactory;
 import rlib.network.client.ClientNetwork;
+import rlib.network.packet.ReadablePacket;
+import rlib.network.packet.SendablePacket;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 
 import java.net.InetSocketAddress;
 
 /**
- * Сеть клиента.
+ * The client network.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Network {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(Network.class);
 
     private static Network instance;
 
+    @NotNull
     public static Network getInstance() {
 
         if (instance == null) {
@@ -32,37 +41,42 @@ public final class Network {
     }
 
     /**
-     * Селектор для подключения к гейм сервере.
+     * The game network.
      */
     private final ClientNetwork gameNetwork;
 
     /**
-     * Игровой сервер.
+     * The connected game server.
      */
-    private NetServer gameServer;
+    private GameServer gameServer;
 
     /**
-     * Флаг завершенного подключения к гейм серверу.
+     * The flag of connection to the server.
      */
     private boolean gameConnected;
 
     private Network() {
         InitializeManager.valid(getClass());
 
-        ServerPacketType.init();
-        ClientPacketType.init();
+        final Array<Class<SendablePacket>> sendablePackets = ArrayFactory.newArray(Class.class);
+        final Array<Class<ReadablePacket>> readablePackets = ArrayFactory.newArray(Class.class);
+
+        final ClassManager classManager = ClassManager.getInstance();
+        classManager.findImplements(sendablePackets, SendablePacket.class);
+        classManager.findImplements(readablePackets, ReadablePacket.class);
 
         gameNetwork = NetworkFactory.newDefaultAsynchronousClientNetwork(Config.NETWORK_CONFIG, GameConnectHandler.getInstance());
 
         connectToServer();
 
-        LOGGER.info("initialized.");
+        LOGGER.info("initialized " + sendablePackets.size() + " server packets and " + readablePackets.size() +
+                " client packets.");
     }
 
     /**
-     * Запусть процесс подключения к игровому серверу.
+     * Try to connect to the server.
      */
-    public void connectToServer() {
+    private void connectToServer() {
 
         final InetSocketAddress targetAddress = Config.SERVER_SOCKET_ADDRESS;
 
@@ -71,21 +85,26 @@ public final class Network {
         gameNetwork.connect(targetAddress);
     }
 
+    /**
+     * @return the game network.
+     */
+    @NotNull
     public ClientNetwork getGameNetwork() {
         return gameNetwork;
     }
 
     /**
-     * @return игровому сервер.
+     * @return the game server.
      */
-    public NetServer getGameServer() {
+    @Nullable
+    private GameServer getGameServer() {
         return gameServer;
     }
 
     /**
-     * @param server игровой сервер.
+     * @param server the game server.
      */
-    public void setGameServer(final NetServer server) {
+    public void setGameServer(@Nullable final GameServer server) {
         this.gameServer = server;
 
         if (server == null) {
@@ -94,14 +113,14 @@ public final class Network {
     }
 
     /**
-     * @return флаг подключения к игровому серверу.
+     * @return true if the network is connected to the server
      */
-    public final boolean isGameConnected() {
+    public synchronized final boolean isGameConnected() {
         return gameConnected;
     }
 
     /**
-     * @param connected флаг подключения к игровому серверу.
+     * @param connected the flag of connection to the server.
      */
     public synchronized final void setGameConnected(final boolean connected) {
         this.gameConnected = connected;
@@ -112,13 +131,13 @@ public final class Network {
     }
 
     /**
-     * Отправка пакета игровому серверу.
+     * Send the client packet to the server.
      *
-     * @param packet отправляемый пакет.
+     * @param packet the client packet.
      */
-    public void sendPacketToGameServer(final ClientPacket packet) {
+    public void sendPacketToGameServer(@NotNull final ClientPacket packet) {
 
-        final NetServer server = getGameServer();
+        final GameServer server = getGameServer();
 
         if (server == null) {
             throw new RuntimeException("not found Game Server.");

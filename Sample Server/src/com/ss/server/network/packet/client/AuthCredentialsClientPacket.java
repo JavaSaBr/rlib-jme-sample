@@ -9,6 +9,8 @@ import com.ss.server.network.packet.server.AuthResultServerPacket;
 import com.ss.server.network.packet.server.AuthResultServerPacket.ResultType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rlib.network.packet.ReadablePacket;
+import rlib.network.packet.ReadablePacketType;
 
 /**
  * The client packet with credentials to authenticate.
@@ -16,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
  * @author JavaSaBr
  */
 public class AuthCredentialsClientPacket extends ClientPacket {
+
+    @NotNull
+    private static final ReadablePacketType<ClientPacket> AUTH_CREDENTIALS = new ReadablePacketType<>(new AuthCredentialsClientPacket(), 1);
 
     /**
      * The user name.
@@ -46,7 +51,13 @@ public class AuthCredentialsClientPacket extends ClientPacket {
         final ResultType resultType = accountManager.auth(owner, username, password);
 
         // send a result of authenticate
-        owner.sendPacket(AuthResultServerPacket.getInstance(resultType, local), true);
+        owner.sendPacket(AuthResultServerPacket.getInstance(resultType), true);
+    }
+
+    @NotNull
+    @Override
+    public ReadablePacketType<? extends ReadablePacket> getPacketType() {
+        return AUTH_CREDENTIALS;
     }
 
     @Override

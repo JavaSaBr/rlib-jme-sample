@@ -1,13 +1,15 @@
 package com.ss.server.network.model;
 
-import com.ss.server.LocalObjects;
 import com.ss.server.manager.AccountManager;
 import com.ss.server.manager.ExecutorManager;
 import com.ss.server.model.Account;
 import com.ss.server.model.tank.PlayerTank;
-import com.ss.server.network.*;
+import com.ss.server.network.ClientPacket;
+import com.ss.server.network.EmptyCrypt;
+import com.ss.server.network.ServerPacket;
 import com.ss.server.network.packet.server.ConnectedNotifierServerPacket;
 import org.jetbrains.annotations.NotNull;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.server.client.impl.AbstractClient;
 
 /**
@@ -15,18 +17,10 @@ import rlib.network.server.client.impl.AbstractClient;
  *
  * @author JavaSaBr
  */
-public class GameClient extends
-        AbstractClient<Account, PlayerTank, GameConnection, EmptyCrypt, ClientPacket, ServerPacket> {
+public class GameClient extends AbstractClient<Account, PlayerTank> {
 
-    /**
-     * The client packet factory.
-     */
-    @NotNull
-    private final PacketFactory<GameClient, ClientPacket, ClientPacketType> packetFactory;
-
-    public GameClient(@NotNull final GameConnection connection, @NotNull final EmptyCrypt crypt) {
+    GameClient(@NotNull final GameConnection connection, @NotNull final EmptyCrypt crypt) {
         super(connection, crypt);
-        this.packetFactory = new ClientPacketFactory();
     }
 
     @Override
@@ -47,28 +41,16 @@ public class GameClient extends
     }
 
     @Override
-    protected void execute(@NotNull final ClientPacket packet) {
+    protected void execute(@NotNull final ReadablePacket packet) {
 
+        final ClientPacket clientPacket = (ClientPacket) packet;
         final ExecutorManager executor = ExecutorManager.getInstance();
 
-        if (packet.isSynchronized()) {
-            executor.runSyncPacket(packet);
+        if (clientPacket.isSynchronized()) {
+            executor.runSyncPacket(clientPacket);
         } else {
-            executor.runAsyncPacket(packet);
+            executor.runAsyncPacket(clientPacket);
         }
-    }
-
-    @NotNull
-    @Override
-    public String getHostAddress() {
-
-        final GameConnection connection = getConnection();
-
-        if (!connection.isClosed()) {
-            return connection.getRemoteAddress();
-        }
-
-        return "unknown";
     }
 
     /**
@@ -79,15 +61,7 @@ public class GameClient extends
         final Account account = getAccount();
         if (account != null) return account.getName();
 
-        return getHostAddress();
-    }
-
-    /**
-     * @return the client packet factory.
-     */
-    @NotNull
-    PacketFactory<GameClient, ClientPacket, ClientPacketType> getPacketFactory() {
-        return packetFactory;
+        return "Unknown";
     }
 
     /**
@@ -103,6 +77,6 @@ public class GameClient extends
 
     @Override
     public void successfulConnection() {
-        sendPacket(ConnectedNotifierServerPacket.getInstance(LocalObjects.get()), true);
+        sendPacket(ConnectedNotifierServerPacket.getInstance(), true);
     }
 }

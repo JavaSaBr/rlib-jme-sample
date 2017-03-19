@@ -3,7 +3,7 @@ package com.ss.client.game.task;
 import static javafx.application.Platform.runLater;
 import com.jme3.app.state.AppStateManager;
 import com.jme3x.jfx.JmeFxContainer;
-import com.ss.client.SampleGame;
+import com.ss.client.GameClient;
 import com.ss.client.manager.ExecutorManager;
 import com.ss.client.stage.Stage;
 import com.ss.client.stage.StageType;
@@ -68,7 +68,7 @@ public class SwitchStateTask implements Runnable {
         });
     }
 
-    private void deactivateCurrentScene(final SampleGame game, final JmeFxContainer fxContainer, final UIScene currentScene) {
+    private void deactivateCurrentScene(final GameClient game, final JmeFxContainer fxContainer, final UIScene currentScene) {
 
         final AppStateManager stateManager = game.getStateManager();
         final StageType current = game.getCurrentStage();
@@ -123,7 +123,7 @@ public class SwitchStateTask implements Runnable {
     @Override
     public void run() {
 
-        final SampleGame game = SampleGame.getInstance();
+        final GameClient game = GameClient.getInstance();
         final JmeFxContainer fxContainer = game.getFxContainer();
 
         final UIScene currentScene = (UIScene) fxContainer.getScene();

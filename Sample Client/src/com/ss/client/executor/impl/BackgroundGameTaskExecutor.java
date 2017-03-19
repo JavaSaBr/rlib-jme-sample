@@ -1,13 +1,10 @@
 package com.ss.client.executor.impl;
 
 import static java.lang.Math.min;
-import static com.ss.client.SampleGame.getCurrentTime;
-import com.ss.client.SampleGame;
+import com.ss.client.GameClient;
 import com.ss.client.game.task.GameTask;
 import com.ss.client.util.LocalObjects;
 import org.jetbrains.annotations.NotNull;
-import com.ss.client.game.task.GameTask;
-import com.ss.client.util.LocalObjects;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.util.array.Array;
 
@@ -49,7 +46,7 @@ public class BackgroundGameTaskExecutor extends AbstractGameTaskExecutor {
 
         for (int i = 0, length = min(execute.size(), PROP_MAXIMUM_UPDATE); i < length; ) {
 
-            final long currentTime = SampleGame.getCurrentTime();
+            final long currentTime = GameClient.getCurrentTime();
 
             for (int count = 0; count < PROP_EXECUTE_LIMIT && i < length; count++, i++) {
 

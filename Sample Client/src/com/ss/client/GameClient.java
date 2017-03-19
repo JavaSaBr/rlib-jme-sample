@@ -17,6 +17,7 @@ import com.ss.client.config.GameConfig;
 import com.ss.client.config.ScreenSize;
 import com.ss.client.executor.impl.GameThreadExecutor;
 import com.ss.client.game.task.SwitchStateTask;
+import com.ss.client.manager.ClassManager;
 import com.ss.client.manager.ExecutorManager;
 import com.ss.client.manager.GameTaskManager;
 import com.ss.client.manager.UpdateObjectManager;
@@ -47,16 +48,16 @@ import java.util.logging.Level;
  *
  * @author JavaSaBr
  */
-public class SampleGame extends SimpleApplication {
+public class GameClient extends SimpleApplication {
 
     @NotNull
-    private static final Logger LOGGER = LoggerManager.getLogger(SampleGame.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(GameClient.class);
 
     @NotNull
-    private static final SampleGame GAME = new SampleGame();
+    private static final GameClient GAME = new GameClient();
 
     @NotNull
-    public static SampleGame getInstance() {
+    public static GameClient getInstance() {
         return GAME;
     }
 
@@ -182,7 +183,7 @@ public class SampleGame extends SimpleApplication {
     @Nullable
     private JmeFxContainer fxContainer;
 
-    private SampleGame() {
+    private GameClient() {
         this.userAccount = new UserAccount();
         this.lock = new StampedLock();
         this.waitedUpdatersGeometriesCount = new AtomicInteger();
@@ -340,6 +341,7 @@ public class SampleGame extends SimpleApplication {
 
         InitializeManager.register(GameTaskManager.class);
         InitializeManager.register(UpdateObjectManager.class);
+        InitializeManager.register(ClassManager.class);
         InitializeManager.register(Network.class);
         InitializeManager.initialize();
 

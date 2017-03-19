@@ -3,8 +3,7 @@ package com.ss.client.executor.impl;
 import com.ss.client.game.task.GameTask;
 import com.sun.javafx.application.PlatformImpl;
 import org.jetbrains.annotations.NotNull;
-import com.ss.client.SampleGame;
-import com.ss.client.game.task.GameTask;
+import com.ss.client.GameClient;
 import com.ss.client.util.LocalObjects;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.util.array.Array;
@@ -51,7 +50,7 @@ public class FXGameTaskExecutor extends AbstractGameTaskExecutor {
         for (int i = 0, length = execute.size(); i < length; ) {
             try {
 
-                final long currentTime = SampleGame.getCurrentTime();
+                final long currentTime = GameClient.getCurrentTime();
 
                 for (int count = 0; count < EXECUTE_LIMIT && i < length; count++, i++) {
 

@@ -1,9 +1,8 @@
 package com.ss.server.network.packet.server;
 
 import com.ss.server.network.ServerPacket;
-import com.ss.server.LocalObjects;
-import com.ss.server.network.ServerPacketType;
 import org.jetbrains.annotations.NotNull;
+import rlib.network.packet.SendablePacketType;
 
 /**
  * The packet to notify client about successful connect to the server.
@@ -12,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ConnectedNotifierServerPacket extends ServerPacket {
 
+    @NotNull
+    private static final SendablePacketType<ServerPacket> CONNECTED_NOTIFIER_TYPE = new SendablePacketType<>(ConnectedNotifierServerPacket.class, 2);
+
     /**
      * The example of this packet to create new packets of the type.
      */
@@ -19,13 +21,13 @@ public class ConnectedNotifierServerPacket extends ServerPacket {
     private static final ConnectedNotifierServerPacket EXAMPLE = new ConnectedNotifierServerPacket();
 
     @NotNull
-    public static ConnectedNotifierServerPacket getInstance(@NotNull final LocalObjects local) {
-        return local.create(EXAMPLE);
+    public static ConnectedNotifierServerPacket getInstance() {
+        return EXAMPLE.newInstance();
     }
 
     @NotNull
     @Override
-    public ServerPacketType getPacketType() {
-        return ServerPacketType.CONNECTED_NOTIFIER;
+    public SendablePacketType<ServerPacket> getPacketType() {
+        return CONNECTED_NOTIFIER_TYPE;
     }
 }

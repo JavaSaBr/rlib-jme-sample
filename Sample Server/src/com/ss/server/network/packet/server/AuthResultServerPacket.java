@@ -1,11 +1,10 @@
 package com.ss.server.network.packet.server;
 
 import static java.util.Objects.requireNonNull;
-import com.ss.server.LocalObjects;
 import com.ss.server.network.ServerPacket;
-import com.ss.server.network.ServerPacketType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rlib.network.packet.SendablePacketType;
 
 import java.nio.ByteBuffer;
 
@@ -15,6 +14,9 @@ import java.nio.ByteBuffer;
  * @author JavaSaBr
  */
 public class AuthResultServerPacket extends ServerPacket {
+
+    @NotNull
+    private static final SendablePacketType<ServerPacket> AUTH_RESULT_TYPE = new SendablePacketType<>(AuthResultServerPacket.class, 1);
 
     public enum ResultType {
         SUCCESSFUL,
@@ -29,10 +31,9 @@ public class AuthResultServerPacket extends ServerPacket {
     private static final AuthResultServerPacket EXAMPLE = new AuthResultServerPacket();
 
     @NotNull
-    public static AuthResultServerPacket getInstance(@NotNull final ResultType resultType,
-                                                     @NotNull final LocalObjects local) {
+    public static AuthResultServerPacket getInstance(@NotNull final ResultType resultType) {
 
-        final AuthResultServerPacket packet = local.create(EXAMPLE);
+        final AuthResultServerPacket packet = EXAMPLE.newInstance();
         packet.resultType = resultType;
 
         return packet;
@@ -45,15 +46,15 @@ public class AuthResultServerPacket extends ServerPacket {
     private volatile ResultType resultType;
 
     @Override
-    protected void writeImpl(@NotNull ByteBuffer buffer) {
+    protected void writeImpl(@NotNull final ByteBuffer buffer) {
         super.writeImpl(buffer);
         writeByte(buffer, requireNonNull(resultType).ordinal());
     }
 
     @NotNull
     @Override
-    public ServerPacketType getPacketType() {
-        return ServerPacketType.AUTH_RESULT;
+    public SendablePacketType<ServerPacket> getPacketType() {
+        return AUTH_RESULT_TYPE;
     }
 
     @Override

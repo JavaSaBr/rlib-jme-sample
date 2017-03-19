@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Starter extends Application {
 
     public static void main(@NotNull final String[] args) throws IOException {
-        SampleGame.start(args);
+        GameClient.start(args);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class GameAcceptHandler extends AcceptHandler {
         final GameConnection connect = new GameConnection(serverNetwork, channel, ServerPacket.class);
         final GameClient client = new GameClient(connect, EmptyCrypt.getInstance());
 
-        connect.setClient(client);
+        connect.setOwner(client);
         client.successfulConnection();
         connect.startRead();
     }

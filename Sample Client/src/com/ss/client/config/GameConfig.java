@@ -6,7 +6,7 @@ import com.jme3.asset.AssetKey;
 import com.jme3.asset.TextureKey;
 import com.jme3.system.AppSettings;
 import com.ss.client.GameContext;
-import com.ss.client.SampleGame;
+import com.ss.client.GameClient;
 
 import java.awt.*;
 import java.util.prefs.BackingStoreException;
@@ -208,7 +208,7 @@ public final class GameConfig implements AssetEventListener {
      */
     private void init() {
 
-        final Preferences prefs = Preferences.userNodeForPackage(SampleGame.class);
+        final Preferences prefs = Preferences.userNodeForPackage(GameClient.class);
 
 
         this.screenSize = ScreenSize.sizeOf(prefs.get(PREF_GRAPHIC_SCREEN_SIZE, "1244x700"));
@@ -314,7 +314,7 @@ public final class GameConfig implements AssetEventListener {
      */
     public void save() {
 
-        final Preferences prefs = Preferences.userNodeForPackage(SampleGame.class);
+        final Preferences prefs = Preferences.userNodeForPackage(GameClient.class);
 
         prefs.put(PREF_GRAPHIC_SCREEN_SIZE, getScreenSize().toString());
         prefs.putBoolean(PREF_GRAPHIC_FULLSCREEN, isFullscreen());

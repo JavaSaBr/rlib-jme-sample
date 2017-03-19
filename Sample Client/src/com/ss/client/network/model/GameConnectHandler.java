@@ -2,8 +2,7 @@ package com.ss.client.network.model;
 
 import com.ss.client.network.ClientPacket;
 import com.ss.client.network.Network;
-import com.ss.client.network.ClientPacket;
-import com.ss.client.network.Network;
+import org.jetbrains.annotations.NotNull;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.client.ConnectHandler;
@@ -14,16 +13,18 @@ import java.net.StandardSocketOptions;
 import java.nio.channels.AsynchronousSocketChannel;
 
 /**
- * Обработчик подключения к серверу.
+ * The connection handler.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class GameConnectHandler implements ConnectHandler {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(GameConnectHandler.class);
 
     private static GameConnectHandler instance;
 
+    @NotNull
     public static GameConnectHandler getInstance() {
 
         if (instance == null) {
@@ -34,7 +35,7 @@ public class GameConnectHandler implements ConnectHandler {
     }
 
     @Override
-    public void onConnect(final AsynchronousSocketChannel channel) {
+    public void onConnect(@NotNull final AsynchronousSocketChannel channel) {
 
         try {
             channel.setOption(StandardSocketOptions.SO_RCVBUF, 12000);
@@ -44,17 +45,17 @@ public class GameConnectHandler implements ConnectHandler {
         }
 
         final Network network = Network.getInstance();
-        final NetConnection connection = new NetConnection(network.getGameNetwork(), channel, ClientPacket.class);
-        final NetServer server = new NetServer(connection, ServerType.GAME_SERVER);
+        final GameConnection connection = new GameConnection(network.getGameNetwork(), channel, ClientPacket.class);
+        final GameServer server = new GameServer(connection);
 
         network.setGameServer(server);
 
-        connection.setServer(server);
+        connection.setOwner(server);
         connection.startRead();
     }
 
     @Override
-    public void onFailed(final Throwable exc) {
+    public void onFailed(@NotNull final Throwable exc) {
 
         if (exc instanceof ConnectException) {
             LOGGER.info(this, "невозможно подключиться.");

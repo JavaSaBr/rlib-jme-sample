@@ -2,10 +2,10 @@ package com.ss.server.network;
 
 import com.ss.server.network.model.GameClient;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rlib.geom.Quaternion4f;
 import rlib.geom.Vector3f;
 import rlib.network.packet.impl.AbstractReusableSendablePacket;
-import rlib.util.pools.ReusablePool;
 
 import java.nio.ByteBuffer;
 
@@ -14,41 +14,7 @@ import java.nio.ByteBuffer;
  *
  * @author JavaSaBr
  */
-public abstract class ServerPacket extends AbstractReusableSendablePacket<GameClient> {
-
-    /**
-     * The type of the packet.
-     */
-    @NotNull
-    private final ServerPacketType type;
-
-    public ServerPacket() {
-        this.type = getPacketType();
-    }
-
-    /**
-     * @return the type of the packet.
-     */
-    @NotNull
-    public abstract ServerPacketType getPacketType();
-
-    /**
-     * @return the pool to store used packet.
-     */
-    @NotNull
-    private ReusablePool<AbstractReusableSendablePacket<GameClient>> getPool() {
-        if (pool != null) return pool;
-        return type.getPool();
-    }
-
-    @Override
-    protected void writeImpl(@NotNull final ByteBuffer buffer) {
-        writePacketTypeId(buffer);
-    }
-
-    protected final void writePacketTypeId(@NotNull final ByteBuffer buffer) {
-        writeShort(buffer, type.getId());
-    }
+public abstract class ServerPacket extends AbstractReusableSendablePacket {
 
     /**
      * Write a quaternion to the packet buffer.
@@ -67,5 +33,11 @@ public abstract class ServerPacket extends AbstractReusableSendablePacket<GameCl
         writeFloat(buffer, vector.getX());
         writeFloat(buffer, vector.getY());
         writeFloat(buffer, vector.getZ());
+    }
+
+    @Nullable
+    @Override
+    public GameClient getOwner() {
+        return (GameClient) super.getOwner();
     }
 }
