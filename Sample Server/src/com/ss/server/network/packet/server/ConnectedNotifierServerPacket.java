@@ -25,18 +25,18 @@ public class ConnectedNotifierServerPacket extends ServerPacket {
     @NotNull
     private static final ConnectedNotifierServerPacket EXAMPLE = new ConnectedNotifierServerPacket();
 
-    /**
-     * The server version.
-     */
-    @Nullable
-    private String serverVersion;
-
     @NotNull
     public static ConnectedNotifierServerPacket getInstance(@NotNull final String serverVersion) {
         final ConnectedNotifierServerPacket packet = EXAMPLE.newInstance();
         packet.serverVersion = serverVersion;
         return packet;
     }
+
+    /**
+     * The server version.
+     */
+    @Nullable
+    private String serverVersion;
 
     @Override
     protected void writeImpl(@NotNull final ByteBuffer buffer) {

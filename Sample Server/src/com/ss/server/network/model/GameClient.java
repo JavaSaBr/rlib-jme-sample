@@ -80,4 +80,9 @@ public class GameClient extends AbstractClient<Account, PlayerTank> {
     public void successfulConnection() {
         sendPacket(ConnectedNotifierServerPacket.getInstance(Config.SERVER_VERSION), true);
     }
+
+    @Override
+    public String toString() {
+        return "GameClient{}";
+    }
 }

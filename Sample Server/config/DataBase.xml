@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <list>
 	<set name="DataBase.driver" value="com.mysql.jdbc.Driver" />
-	<set name="DataBase.url" value="jdbc:mysql://localhost/sample_server" />
+	<set name="DataBase.url" value="jdbc:mysql://localhost/sample_server?useUnicode=true&amp;characterEncoding=utf8" />
 
 	<set name="DataBase.login" value="root" />
 	<set name="DataBase.password" value="root" />
