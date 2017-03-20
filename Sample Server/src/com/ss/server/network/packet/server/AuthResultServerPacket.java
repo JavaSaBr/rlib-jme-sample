@@ -16,7 +16,8 @@ import java.nio.ByteBuffer;
 public class AuthResultServerPacket extends ServerPacket {
 
     @NotNull
-    private static final SendablePacketType<ServerPacket> AUTH_RESULT_TYPE = new SendablePacketType<>(AuthResultServerPacket.class, 1);
+    private static final SendablePacketType<ServerPacket> AUTH_RESULT_TYPE =
+            new SendablePacketType<>(AuthResultServerPacket.class, 1);
 
     public enum ResultType {
         SUCCESSFUL,
@@ -60,5 +61,10 @@ public class AuthResultServerPacket extends ServerPacket {
     @Override
     public void free() {
         resultType = null;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthResultServerPacket{" + "resultType=" + resultType + '}';
     }
 }

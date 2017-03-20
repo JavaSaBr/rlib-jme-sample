@@ -54,19 +54,9 @@ public final class Config {
     public static boolean ACCOUNT_AUTO_REGISTER;
 
     /**
-     * The server name.
-     */
-    public static String SERVER_NAME;
-
-    /**
      * The server version.
      */
     public static String SERVER_VERSION;
-
-    /**
-     * The server type.
-     */
-    public static String SERVER_TYPE;
 
     /**
      * The server host.
@@ -176,9 +166,7 @@ public final class Config {
         ACCOUNT_MIN_ACCESS_LEVEL = vars.getInteger("Account.minAccessLevel");
         ACCOUNT_AUTO_REGISTER = vars.getBoolean("Account.autoRegister", false);
 
-        SERVER_NAME = vars.getString("Server.name");
         SERVER_VERSION = vars.getString("Server.version");
-        SERVER_TYPE = vars.getString("Server.type");
         SERVER_HOST = vars.getString("Server.host");
         SERVER_PORT = vars.getInteger("Server.port");
 

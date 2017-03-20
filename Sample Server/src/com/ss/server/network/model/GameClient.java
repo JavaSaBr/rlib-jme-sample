@@ -1,5 +1,6 @@
 package com.ss.server.network.model;
 
+import com.ss.server.Config;
 import com.ss.server.manager.AccountManager;
 import com.ss.server.manager.ExecutorManager;
 import com.ss.server.model.Account;
@@ -77,6 +78,6 @@ public class GameClient extends AbstractClient<Account, PlayerTank> {
 
     @Override
     public void successfulConnection() {
-        sendPacket(ConnectedNotifierServerPacket.getInstance(), true);
+        sendPacket(ConnectedNotifierServerPacket.getInstance(Config.SERVER_VERSION), true);
     }
 }

@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <list>
-	<set name="Server.name" value="Test Sever" />
-	<set name="Server.version" value="0.0" />
-	<set name="Server.type" value="TEST" />
+	<set name="Server.version" value="0.0.1" />
 	<set name="Server.host" value="localhost" />
 	<set name="Server.port" value="14000" />
 </list>    

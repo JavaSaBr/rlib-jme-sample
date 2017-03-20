@@ -20,7 +20,8 @@ import rlib.network.packet.ReadablePacketType;
 public class AuthCredentialsClientPacket extends ClientPacket {
 
     @NotNull
-    private static final ReadablePacketType<ClientPacket> AUTH_CREDENTIALS = new ReadablePacketType<>(new AuthCredentialsClientPacket(), 1);
+    private static final ReadablePacketType<ClientPacket> AUTH_CREDENTIALS =
+            new ReadablePacketType<>(new AuthCredentialsClientPacket(), 1);
 
     /**
      * The user name.
@@ -64,5 +65,10 @@ public class AuthCredentialsClientPacket extends ClientPacket {
     public void free() {
         name = null;
         password = null;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthCredentialsClientPacket{" + "name='" + name + '\'' + ", password='" + password + '\'' + '}';
     }
 }

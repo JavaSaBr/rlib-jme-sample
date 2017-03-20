@@ -60,8 +60,14 @@ public class ClassManager {
 
         LOGGER.info("compile " + classes.size() + " classes.");
 
-        scanner.scanning(path -> true);
+        scanner.scanning(this::isNeedToScan);
         scanner.addClasses(classes);
+    }
+
+    @NotNull
+    private Boolean isNeedToScan(final String path) {
+        if(path.contains("jre")) return false;
+        return true;
     }
 
     /**
