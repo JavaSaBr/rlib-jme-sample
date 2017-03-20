@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.ReadablePacketType;
 
+import java.nio.ByteBuffer;
+
 /**
  * The client packet with credentials to authenticate.
  *
@@ -20,25 +22,26 @@ import rlib.network.packet.ReadablePacketType;
 public class AuthCredentialsClientPacket extends ClientPacket {
 
     @NotNull
-    private static final ReadablePacketType<ClientPacket> AUTH_CREDENTIALS =
+    private static final ReadablePacketType<ClientPacket> AUTH_CREDENTIALS_TYPE =
             new ReadablePacketType<>(new AuthCredentialsClientPacket(), 1);
 
     /**
      * The user name.
      */
     @Nullable
-    private volatile String name;
+    private String name;
 
     /**
      * The user password.
      */
     @Nullable
-    private volatile String password;
+    private String password;
 
     @Override
-    protected void readImpl() {
-        name = readString();
-        password = readString();
+    protected void readImpl(@NotNull final ByteBuffer buffer) {
+        super.readImpl(buffer);
+        name = readString(buffer);
+        password = readString(buffer);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class AuthCredentialsClientPacket extends ClientPacket {
     @NotNull
     @Override
     public ReadablePacketType<? extends ReadablePacket> getPacketType() {
-        return AUTH_CREDENTIALS;
+        return AUTH_CREDENTIALS_TYPE;
     }
 
     @Override

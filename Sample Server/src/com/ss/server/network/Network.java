@@ -13,6 +13,7 @@ import rlib.manager.InitializeManager;
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.ServerNetwork;
+import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -60,6 +61,9 @@ public final class Network {
             final ClassManager classManager = ClassManager.getInstance();
             classManager.findImplements(sendablePackets, SendablePacket.class);
             classManager.findImplements(readablePackets, ReadablePacket.class);
+
+            sendablePackets.forEach(ClassUtils::newInstance);
+            readablePackets.forEach(ClassUtils::newInstance);
 
             serverNetwork = requireNonNull(newDefaultAsynchronousServerNetwork(GameNetworkConfig.getInstance(),
                     GameAcceptHandler.getInstance()));

@@ -29,7 +29,7 @@ public class ConnectedNotifierServerPacket extends ServerPacket {
      * The server version.
      */
     @Nullable
-    private volatile String serverVersion;
+    private String serverVersion;
 
     @NotNull
     public static ConnectedNotifierServerPacket getInstance(@NotNull final String serverVersion) {

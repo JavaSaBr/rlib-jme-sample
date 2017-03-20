@@ -65,7 +65,7 @@ public class ClassManager {
     }
 
     @NotNull
-    private Boolean isNeedToScan(final String path) {
+    private Boolean isNeedToScan(@NotNull final String path) {
         if(path.contains("jre")) return false;
         return true;
     }

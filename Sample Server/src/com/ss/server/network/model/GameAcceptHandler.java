@@ -35,6 +35,12 @@ public class GameAcceptHandler extends AcceptHandler {
     protected void onAccept(@NotNull final AsynchronousSocketChannel channel) {
 
         try {
+            LOGGER.info("Accept new connection:" + channel.getRemoteAddress());
+        } catch (final IOException e) {
+            LOGGER.warning(e);
+        }
+
+        try {
             channel.setOption(StandardSocketOptions.SO_SNDBUF, 12000);
             channel.setOption(StandardSocketOptions.SO_RCVBUF, 24000);
         } catch (final IOException e) {
