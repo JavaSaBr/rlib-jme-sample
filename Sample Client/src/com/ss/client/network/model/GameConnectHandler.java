@@ -1,5 +1,6 @@
 package com.ss.client.network.model;
 
+import com.ss.client.manager.ExecutorManager;
 import com.ss.client.network.ClientPacket;
 import com.ss.client.network.Network;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,8 @@ public class GameConnectHandler implements ConnectHandler {
 
     @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(GameConnectHandler.class);
+
+    private static final int CONNECTION_ATTTEMPT_INTERVAL = 5000;
 
     private static GameConnectHandler instance;
 
@@ -56,11 +59,17 @@ public class GameConnectHandler implements ConnectHandler {
 
     @Override
     public void onFailed(@NotNull final Throwable exc) {
-
         if (exc instanceof ConnectException) {
             LOGGER.info(this, "невозможно подключиться.");
+            final ExecutorManager executorManager = ExecutorManager.getInstance();
+            executorManager.execute(getConnectTask(), CONNECTION_ATTTEMPT_INTERVAL);
         } else {
             LOGGER.warning(this, new Exception(exc));
         }
+    }
+
+    @NotNull
+    private Runnable getConnectTask() {
+        return () -> Network.getInstance().connectToServer();
     }
 }

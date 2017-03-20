@@ -5,10 +5,6 @@ import com.ss.client.Starter;
 import com.ss.client.document.DocumentConfig;
 import com.ss.client.util.GameUtil;
 import org.jetbrains.annotations.NotNull;
-import com.ss.client.GameThread;
-import com.ss.client.Starter;
-import com.ss.client.document.DocumentConfig;
-import com.ss.client.util.GameUtil;
 import rlib.network.NetworkConfig;
 import rlib.util.Util;
 import rlib.util.VarTable;
@@ -25,6 +21,12 @@ import java.net.UnknownHostException;
 public abstract class Config {
 
     public static final String CONFIG_RESOURCE_PATH = "/com/ss/client/config/config.xml";
+
+    /**
+     * The version of the client.
+     */
+    @NotNull
+    public static final String GAME_VERSION = "0.0.1";
 
     /**
      * The server address.

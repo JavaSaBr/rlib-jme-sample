@@ -13,6 +13,7 @@ import rlib.network.NetworkFactory;
 import rlib.network.client.ClientNetwork;
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
+import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -65,18 +66,21 @@ public final class Network {
         classManager.findImplements(sendablePackets, SendablePacket.class);
         classManager.findImplements(readablePackets, ReadablePacket.class);
 
-        gameNetwork = NetworkFactory.newDefaultAsynchronousClientNetwork(Config.NETWORK_CONFIG, GameConnectHandler.getInstance());
+        sendablePackets.forEach(ClassUtils::newInstance);
+        readablePackets.forEach(ClassUtils::newInstance);
 
-        connectToServer();
+        gameNetwork = NetworkFactory.newDefaultAsynchronousClientNetwork(Config.NETWORK_CONFIG, GameConnectHandler.getInstance());
 
         LOGGER.info("initialized " + sendablePackets.size() + " server packets and " + readablePackets.size() +
                 " client packets.");
+
+        connectToServer();
     }
 
     /**
      * Try to connect to the server.
      */
-    private void connectToServer() {
+    public void connectToServer() {
 
         final InetSocketAddress targetAddress = Config.SERVER_SOCKET_ADDRESS;
 
@@ -97,7 +101,7 @@ public final class Network {
      * @return the game server.
      */
     @Nullable
-    private GameServer getGameServer() {
+    public GameServer getGameServer() {
         return gameServer;
     }
 

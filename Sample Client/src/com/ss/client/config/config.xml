@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <list>
 	<set name="Server.host" value="localhost" />
-	<set name="Server.port" value="1000" />
+	<set name="Server.port" value="14000" />
 	
 	<set name="Network.readBufferSize" value="8388608" />
 	<set name="Network.writeBufferSize" value="8388608" />

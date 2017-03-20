@@ -36,7 +36,14 @@ public class ClassManager {
         InitializeManager.valid(getClass());
 
         scanner = ClassPathScannerFactory.newManifestScanner(GameClient.class, "Class-Path");
-        scanner.scanning(path -> true);
+        scanner.scanning(this::isNeedToScan);
+    }
+
+    @NotNull
+    private Boolean isNeedToScan(@NotNull final String path) {
+        if(path.contains("jre")) return false;
+        if(path.contains("jME")) return false;
+        return true;
     }
 
     /**
