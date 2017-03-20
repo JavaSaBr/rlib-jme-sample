@@ -9,7 +9,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.jme3x.jfx.JmeFxContainer;
-import com.jme3x.jfx.cursor.proton.ProtonCursorProvider;
 import com.jme3x.jfx.util.os.OperatingSystem;
 import com.ss.client.config.CommandLineConfig;
 import com.ss.client.config.Config;
@@ -24,6 +23,7 @@ import com.ss.client.manager.UpdateObjectManager;
 import com.ss.client.model.impl.UserAccount;
 import com.ss.client.network.Network;
 import com.ss.client.stage.StageType;
+import com.ss.client.ui.ui.UbuntuCursorProvider;
 import com.sun.javafx.cursor.CursorType;
 import javafx.application.Platform;
 import org.jetbrains.annotations.NotNull;
@@ -319,7 +319,7 @@ public class GameClient extends SimpleApplication {
         final Node guiNode = getGuiNode();
         guiNode.detachAllChildren();
 
-        final ProtonCursorProvider cursorDisplayProvider = new ProtonCursorProvider(this, assetManager, inputManager);
+        final UbuntuCursorProvider cursorDisplayProvider = new UbuntuCursorProvider(this, assetManager, inputManager);
 
         for (final CursorType type : CursorType.values()) {
             cursorDisplayProvider.setup(type);

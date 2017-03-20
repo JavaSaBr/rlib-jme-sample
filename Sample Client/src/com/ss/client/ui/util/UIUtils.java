@@ -1,6 +1,6 @@
 package com.ss.client.ui.util;
 
-import com.ss.client.ui.component.ScreenComponent;
+import com.ss.client.ui.component.UIComponent;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -8,7 +8,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.util.Duration;
-import com.ss.client.ui.component.ScreenComponent;
 import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 
@@ -29,10 +28,10 @@ public class UIUtils {
 	/**
 	 * Поиск всех компонентов экрана.
 	 */
-	public static void fillComponents(final Array<ScreenComponent> container, final Node node) {
+	public static void fillComponents(final Array<UIComponent> container, final Node node) {
 
-		if(node instanceof ScreenComponent) {
-			container.add((ScreenComponent) node);
+		if(node instanceof UIComponent) {
+			container.add((UIComponent) node);
 		}
 
 		if(node instanceof Parent) {

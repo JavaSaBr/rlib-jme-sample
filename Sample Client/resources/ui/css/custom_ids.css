@@ -1,0 +1,30 @@
+
+#SceneRoot {
+    -fx-alignment: center;
+    -fx-background-image: url("/ui/background/galaxy.jpg");
+    -fx-background-repeat: repeat;
+}
+
+#LoginAuthPanel {
+    -fx-alignment: top-center;
+    -fx-min-width: 300px;
+    -fx-max-width: -fx-min-width;
+    -fx-min-height: 150px;
+    -fx-max-height: -fx-min-height;
+    -fx-background-color: -fx-background-background;
+    -fx-effect: -fx-material-shadow-panel;
+    -fx-hgap: 2px;
+    -fx-vgap: 2px;
+    -fx-padding: 10px 5px 5px 5px;
+}
+
+#LoginAuthPanelMessageLabel {
+    -fx-text-fill: red;
+    -fx-wrap-text: true;
+    -fx-min-height: 55px;
+    -fx-max-height: -fx-min-height;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}

@@ -52,6 +52,7 @@ public class GameConnectHandler implements ConnectHandler {
         final GameServer server = new GameServer(connection);
 
         network.setGameServer(server);
+        network.setGameConnected(true);
 
         connection.setOwner(server);
         connection.startRead();

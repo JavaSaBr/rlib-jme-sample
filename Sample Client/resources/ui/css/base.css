@@ -1,0 +1,1315 @@
+@font-face {
+    font-family: Ubuntu Regular;
+    src: url("/ui/fonts/ubuntu/Ubuntu-R.ttf");
+}
+
+@font-face {
+    font-family: Ubuntu Condensed;
+    src: url("/ui/fonts/ubuntu/Ubuntu-C.ttf");
+}
+
+@font-face {
+    font-family: Ubuntu Mono;
+    src: url("/ui/fonts/ubuntu/Ubuntu-M.ttf");
+}
+
+@font-face {
+    font-family: Ubuntu Mono Bold;
+    src: url("/ui/fonts/ubuntu/UbuntuMono-B.ttf");
+}
+
+
+.root {
+    /***************************************************************************
+     *                                                                         *
+     * The main color palette from which the rest of the colors are derived.   *
+     *                                                                         *
+     **************************************************************************/
+
+    /* A light grey that is the base color for objects.  Instead of using
+     * -fx-base directly, the sections in this file will typically use -fx-color.
+     */
+    -fx-base: #3d3d3d;
+
+    /* A very light grey used for the background of windows.  See also
+     * -fx-text-background-color, which should be used as the -fx-text-fill
+     * value for text painted on top of backgrounds colored with -fx-background.
+     */
+    -fx-background: derive(-fx-base, 26.4%);
+
+    /* Used for the inside of text boxes, password boxes, lists, trees, and
+     * tables.  See also -fx-text-inner-color, which should be used as the
+     * -fx-text-fill value for text painted on top of backgrounds colored
+     * with -fx-control-inner-background.
+     */
+    -fx-control-inner-background: rgba(0.0, 0.0, 0.0, 0.75);
+    /* Version of -fx-control-inner-background for alternative rows */
+    -fx-control-inner-background-alt: derive(-fx-control-inner-background, -2%);
+
+    /* One of these colors will be chosen based upon a ladder calculation
+     * that uses the brightness of a background color.  Instead of using these
+     * colors directly as -fx-text-fill values, the sections in this file should
+     * use a derived color to match the background in use.  See also:
+     *
+     * -fx-text-base-color for text on top of -fx-base, -fx-color, and -fx-body-color
+     * -fx-text-background-color for text on top of -fx-background
+     * -fx-text-inner-color for text on top of -fx-control-inner-color
+     * -fx-selection-bar-text for text on top of -fx-selection-bar
+     */
+    -fx-dark-text-color: white;
+    -fx-mid-text-color: white;
+    -fx-light-text-color: white;
+
+    /* A bright blue for highlighting/accenting objects.  For example: selected
+     * text; selected items in menus, lists, trees, and tables; progress bars */
+    -fx-accent: #0096C9;
+
+    /* Default buttons color, this is similar to accent but more subtle */
+    -fx-default-button: #ABD8ED;
+
+    /* A bright blue for the focus indicator of objects. Typically used as the
+     * first color in -fx-background-color for the "focused" pseudo-class. Also
+     * typically used with insets of -1.4 to provide a glowing effect.
+     */
+    -fx-focus-color: #039ED3;
+    -fx-faint-focus-color: #039ED322;
+
+    /* The color that is used in styling controls. The default value is based
+     * on -fx-base, but is changed by pseudoclasses to change the base color.
+     * For example, the "hover" pseudoclass will typically set -fx-color to
+     * -fx-hover-base (see below) and the "armed" pseudoclass will typically
+     * set -fx-color to -fx-pressed-base.
+     */
+    -fx-color: -fx-base;
+
+    /* Chart Color Palette */
+    CHART_COLOR_1: #f3622d;
+    CHART_COLOR_2: #fba71b;
+    CHART_COLOR_3: #57b757;
+    CHART_COLOR_4: #41a9c9;
+    CHART_COLOR_5: #4258c9;
+    CHART_COLOR_6: #9a42c8;
+    CHART_COLOR_7: #c84164;
+    CHART_COLOR_8: #888888;
+    /* Chart Color Palette Semi-Transparent
+     * These are used by charts that need semi transparent versions of the above colors, such as BubbleChart. They
+     * are exactly the same colors as above just with alpha
+     *
+     * 20% opacity
+     */
+    CHART_COLOR_1_TRANS_20: #f3622d33;
+    CHART_COLOR_2_TRANS_20: #fba71b33;
+    CHART_COLOR_3_TRANS_20: #57b75733;
+    CHART_COLOR_4_TRANS_20: #41a9c933;
+    CHART_COLOR_5_TRANS_20: #4258c933;
+    CHART_COLOR_6_TRANS_20: #9a42c833;
+    CHART_COLOR_7_TRANS_20: #c8416433;
+    CHART_COLOR_8_TRANS_20: #88888833;
+    /* 70% opacity */
+    CHART_COLOR_1_TRANS_70: #f3622db3;
+    CHART_COLOR_2_TRANS_70: #fba71bb3;
+    CHART_COLOR_3_TRANS_70: #57b757b3;
+    CHART_COLOR_4_TRANS_70: #41a9c9b3;
+    CHART_COLOR_5_TRANS_70: #4258c9b3;
+    CHART_COLOR_6_TRANS_70: #9a42c8b3;
+    CHART_COLOR_7_TRANS_70: #c84164b3;
+    CHART_COLOR_8_TRANS_70: #888888b3;
+
+    /***************************************************************************
+     *                                                                         *
+     * Colors that are derived from the main color palette.                    *
+     *                                                                         *
+     **************************************************************************/
+
+    /* A little lighter than -fx-base and used as the -fx-color for the
+     * "hovered" pseudoclass state.
+     */
+    -fx-hover-base: ladder(
+            -fx-base,
+            derive(-fx-base, 20%) 20%,
+            derive(-fx-base, 30%) 35%,
+            derive(-fx-base, 40%) 50%
+    );
+
+    /* A little darker than -fx-base and used as the -fx-color for the
+     * "armed" pseudoclass state.
+     *
+     * TODO: should this be renamed to -fx-armed-base?
+     */
+    -fx-pressed-base: derive(-fx-base, -6%);
+
+    /* The color to use for -fx-text-fill when text is to be painted on top of
+     * a background filled with the -fx-background color.
+     */
+    -fx-text-background-color: ladder(
+            -fx-background,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color 46%,
+            -fx-dark-text-color 59%,
+            -fx-mid-text-color 60%
+    );
+
+    /* A little darker than -fx-color and used to draw boxes around objects such
+     * as progress bars, scroll bars, scroll panes, trees, tables, and lists.
+     */
+    -fx-box-border: ladder(
+            -fx-color,
+            black 20%,
+            derive(-fx-color, -15%) 30%
+    );
+
+    /* Darker than -fx-background and used to draw boxes around text boxes and
+     * password boxes.
+     */
+    -fx-text-box-border: ladder(
+            -fx-background,
+            black 10%,
+            derive(-fx-background, -15%) 30%
+    );
+
+    /* Lighter than -fx-background and used to provide a small highlight when
+     * needed on top of -fx-background. This is never a shadow in Modena but
+     * keep -fx-shadow-highlight-color name to be compatible with Caspian.
+     */
+    -fx-shadow-highlight-color: ladder(
+            -fx-background,
+            rgba(255, 255, 255, 0.07) 0%,
+            rgba(255, 255, 255, 0.07) 20%,
+            rgba(255, 255, 255, 0.07) 70%,
+            rgba(255, 255, 255, 0.7) 90%,
+            rgba(255, 255, 255, 0.75) 100%
+    );
+
+    /* A gradient that goes from a little darker than -fx-color on the top to
+     * even more darker than -fx-color on the bottom.  Typically is the second
+     * color in the -fx-background-color list as the small thin border around
+     * a control. It is typically the same size as the control (i.e., insets
+     * are 0).
+     */
+    -fx-outer-border: derive(-fx-color, -23%);
+
+    /* A gradient that goes from a bit lighter than -fx-color on the top to
+     * a little darker at the bottom.  Typically is the third color in the
+     * -fx-background-color list as a thin highlight inside the outer border.
+     * Insets are typically 1.
+     */
+    -fx-inner-border: linear-gradient(to bottom,
+    ladder(
+            -fx-color,
+            derive(-fx-color, 30%) 0%,
+            derive(-fx-color, 20%) 40%,
+            derive(-fx-color, 25%) 60%,
+            derive(-fx-color, 55%) 80%,
+            derive(-fx-color, 55%) 90%,
+            derive(-fx-color, 75%) 100%
+    ),
+    ladder(
+            -fx-color,
+            derive(-fx-color, 20%) 0%,
+            derive(-fx-color, 10%) 20%,
+            derive(-fx-color, 5%) 40%,
+            derive(-fx-color, -2%) 60%,
+            derive(-fx-color, -5%) 100%
+    ));
+    -fx-inner-border-horizontal: linear-gradient(to right, derive(-fx-color, 55%), derive(-fx-color, -5%));
+    -fx-inner-border-bottomup: linear-gradient(to top, derive(-fx-color, 55%), derive(-fx-color, -5%));
+
+    /* A gradient that goes from a little lighter than -fx-color at the top to
+     * a little darker than -fx-color at the bottom and is used to fill the
+     * body of many controls such as buttons.
+     */
+    -fx-body-color: linear-gradient(to bottom,
+    ladder(
+            -fx-color,
+            derive(-fx-color, 8%) 75%,
+            derive(-fx-color, 10%) 80%
+    ),
+    derive(-fx-color, -8%));
+    -fx-body-color-bottomup: linear-gradient(to top, derive(-fx-color, 10%), derive(-fx-color, -6%));
+    -fx-body-color-to-right: linear-gradient(to right, derive(-fx-color, 10%), derive(-fx-color, -6%));
+
+    /* The color to use as -fx-text-fill when painting text on top of
+     * backgrounds filled with -fx-base, -fx-color, and -fx-body-color.
+     */
+    -fx-text-base-color: ladder(
+            -fx-color,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color 46%,
+            -fx-dark-text-color 59%,
+            -fx-mid-text-color 60%
+    );
+
+    /* The color to use as -fx-text-fill when painting text on top of
+     * backgrounds filled with -fx-control-inner-background.
+     */
+    -fx-text-inner-color: ladder(
+            -fx-control-inner-background,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color 46%,
+            -fx-dark-text-color 59%,
+            -fx-mid-text-color 60%
+    );
+
+    /* The color to use for small mark-like objects such as checks on check
+     * boxes, filled in circles in radio buttons, arrows on scroll bars, etc.
+     */
+    -fx-mark-color: ladder(
+            -fx-color,
+            white 30%,
+            derive(-fx-color, -63%) 31%
+    );
+
+    /* The small thin light "shadow" for mark-like objects. Typically used in
+     * conjunction with -fx-mark-color with an insets of 1 0 -1 0. */
+    -fx-mark-highlight-color: ladder(
+            -fx-color,
+            derive(-fx-color, 80%) 60%,
+            white 70%
+    );
+
+    /* Background for items in list like things such as menus, lists, trees,
+     * and tables. */
+    -fx-selection-bar: -fx-accent;
+
+    /* Background color to use for selection of list cells etc. This is when
+     * the control doesn't have focus or the row of a previously selected item. */
+    -fx-selection-bar-non-focused: lightgrey;
+
+    /* The color to use as -fx-text-fill when painting text on top of
+     * backgrounds filled with -fx-selection-bar.
+     *
+     * TODO: this can be removed
+     */
+    -fx-selection-bar-text: -fx-text-background-color;
+
+    /* These are needed for Popup */
+    -fx-background-radius: inherit;
+    -fx-background-insets: inherit;
+    -fx-padding: inherit;
+
+    /* The color to use in ListView/TreeView/TableView to indicate hover. */
+    -fx-cell-hover-color: #cce3f4;
+
+    /** Focus line for keyboard focus traversal on cell based controls */
+    -fx-cell-focus-inner-border: derive(-fx-selection-bar, 30%);
+
+    /* The colors to use in Pagination */
+    -fx-page-bullet-border: #acacac;
+    -fx-page-indicator-hover-border: #accee5;
+
+    /***************************************************************************
+     *                                                                         *
+     * Set the default background color for the scene                          *
+     *                                                                         *
+     **************************************************************************/
+
+    -fx-background-color: -fx-background;
+
+    -fx-color-0: white;
+    -fx-color-15: #e2f6ff;
+    -fx-color-50: #E1F5FE;
+    -fx-color-100: #B3E5FC;
+    -fx-color-200: #81D4FA;
+    -fx-color-300: #4FC3F7;
+    -fx-color-400: #29B6F6;
+    -fx-color-500: #03A9F4;
+    -fx-color-600: #039BE5;
+    -fx-color-700: #0288D1;
+    -fx-color-800: #0277BD;
+    -fx-color-900: #01579B;
+    -fx-color-A100: #82B1FF;
+    -fx-color-A200: #448AFF;
+    -fx-color-A300: #2979FF;
+    -fx-color-A400: #2962FF;
+
+    -fx-color-panel-0: white;
+    -fx-color-panel-50: #b7b7b7;
+    -fx-color-panel-100: #595959;
+    -fx-color-panel-200: #515151;
+    -fx-color-panel-400: #474747;
+    -fx-color-panel-400-transparent: rgba(71, 71, 71, 0.5);
+    -fx-color-panel-900: #3d3d3d;
+
+    -fx-button-background-hover: rgba(255, 255, 255, 0.1);
+    -fx-button-background-arm: rgba(255, 255, 255, 0.2);
+
+    -fx-control-app-bar: #343434;
+
+    -fx-background-status-bar: #000000;
+    -fx-background-app-bar: #212121;
+    -fx-background-background: #303030;
+    -fx-background-dialogs: #424242;
+
+    -fx-material-shadow-panel: dropshadow(two-pass-box, rgba(0, 0, 0, 0.5), 10, 0.01, 1, 1);
+    -fx-material-shadow-control: dropshadow(three-pass-box, #1a1a1a, 4, 0.1, 0, 1);
+
+    -fx-control-width: 180;
+    -fx-control-medium-width: 200;
+    -fx-control-bid-width: 240;
+
+    -fx-control-height: 28;
+    -fx-control-medium-height: 30;
+    -fx-control-big-height: 34;
+
+    -fx-accent: -fx-color-400;
+    -fx-focus-color: -fx-color-500;
+
+    -fx-font-color: white;
+}
+
+/* Make popups transparent */
+.root.popup {
+    -fx-background-color: transparent;
+}
+
+/* ContextMenu */
+
+.context-menu {
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: -fx-background-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2px;
+    -fx-effect: -fx-material-shadow-control;
+}
+
+.context-menu .separator:horizontal .line {
+    -fx-border-color: -fx-box-border transparent transparent transparent;
+    -fx-border-insets: 1 0 0 0;
+}
+
+.context-menu > .scroll-arrow {
+    -fx-padding: 0.416667em 0.416667em 0.416667em 0.416667em; /* 5 */
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.context-menu > .scroll-arrow:hover {
+    -fx-background: -fx-selection-bar;
+    -fx-background-color: -fx-background;
+    -fx-background-radius: 0;
+    -fx-text-fill: -fx-text-background-color;
+}
+
+.context-menu:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-fill;
+}
+
+/* ScrollBar */
+
+.corner {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:horizontal,
+.scroll-bar:vertical,
+.scroll-bar:focused,
+.scroll-bar:vertical:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.scroll-bar > .thumb,
+.scroll-bar:vertical > .thumb {
+    -fx-background-color: -fx-color-600;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.scroll-bar > .track,
+.scroll-bar:vertical > .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .track-background,
+.scroll-bar:vertical > .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button,
+.scroll-bar > .increment-button:hover,
+.scroll-bar > .decrement-button:hover,
+.scroll-bar > .increment-button:pressed,
+.scroll-bar > .decrement-button:pressed {
+    -fx-padding: 2px;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow,
+.scroll-bar > .increment-button:hover > .increment-arrow,
+.scroll-bar > .decrement-button:hover > .decrement-arrow,
+.scroll-bar > .increment-button:pressed > .increment-arrow,
+.scroll-bar > .decrement-button:pressed > .decrement-arrow {
+    -fx-padding: 0;
+}
+
+.scroll-bar:horizontal > .decrement-button > .decrement-arrow,
+.scroll-bar:horizontal > .increment-button > .increment-arrow,
+.scroll-bar:vertical > .decrement-button > .decrement-arrow,
+.scroll-bar:vertical > .increment-button > .increment-arrow {
+    -fx-padding: 0;
+}
+
+/* Scroll Pane */
+
+.scroll-pane > .viewport,
+.scroll-pane {
+    -fx-background-color: -fx-background-background;
+}
+
+/* SplitPane */
+
+.split-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-padding: 0 1 0 0;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-background-color: -fx-background-status-bar;
+    -fx-background-insets: 0;
+    -fx-effect: null;
+}
+
+.split-pane:vertical > .split-pane-divider {
+    -fx-background-color: -fx-background-status-bar;
+    -fx-background-insets: 0;
+    -fx-effect: null;
+}
+
+/* TabPane */
+
+.tab-pane {
+    -fx-tab-min-height: 1.8333em; /* 22 */
+    -fx-tab-max-height: 1.8333em; /* 22 */
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-border-color: transparent;
+    -fx-alignment: center-right;
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color, -fx-body-color;
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0;
+    -fx-cursor: hand;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:top {
+    -fx-padding: 2 6 2 6;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:right {
+    -fx-padding: 2 6 2 6;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:bottom {
+    -fx-padding: 2 6 2 6;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:left {
+    -fx-padding: 2 6 2 6;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-600 0%,
+    -fx-color-600 7%,
+    transparent 10%);
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-insets: 0;
+    -fx-border-radius: 0; /* looks sharper if outer border has a tighter radius (2 instead of 3) */
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:bottom:selected .focus-indicator {
+    -fx-border-insets: -6 -5 -4 -4, -5 -3 -2 -2;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:disabled:hover {
+    -fx-color: -fx-base;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: -fx-background-background;
+}
+
+.tab-pane:top > .tab-header-area > .tab-header-background {
+    -fx-background-insets: 0, 0 0 1 0, 1;
+}
+
+.tab-pane:bottom > .tab-header-area > .tab-header-background {
+    -fx-background-insets: 0; /* 0, 0 1 0 0, 1 */
+}
+
+.tab-pane:left > .tab-header-area > .tab-header-background {
+    -fx-background-insets: 0; /* 0, 0 1 0 0, 1 */
+}
+
+.tab-pane:right > .tab-header-area > .tab-header-background {
+    -fx-background-insets: 0, 0 0 0 1, 1;
+}
+
+.tab-pane:top > .tab-header-area {
+    /*-fx-padding: 0.416667em 0.166667em 0.0em 0.416667em; *//* 5 2 0 5 */
+    -fx-padding: 0; /* 5 2 0 5 */
+}
+
+.tab-pane:bottom > .tab-header-area {
+    -fx-padding: 0; /* 5 0 2 5 */
+}
+
+.tab-pane:left > .tab-header-area {
+    -fx-padding: 0; /* 5 0 2 5 */
+}
+
+.tab-pane:right > .tab-header-area {
+    -fx-padding: 0; /* 5 5 2 0 */
+}
+
+/* TODO: scaling the shape seems to make it way too large */
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-close-button {
+    -fx-background-color: -fx-button-background-arm;
+    -fx-shape: "M 0,0 H1 L 4,3 7,0 H8 V1 L 5,4 8,7 V8 H7 L 4,5 1,8 H0 V7 L 3,4 0,1 Z";
+    -fx-scale-shape: false;
+    -fx-effect: null;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover > .tab-container > .tab-close-button {
+    -fx-background-color: -fx-button-background-arm;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-close-button:hover {
+    -fx-background-color: white;
+}
+
+/* CONTROL BUTTONS */
+.tab-pane > .tab-header-area > .control-buttons-tab > .container {
+    -fx-padding: 3 0 0 0;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-insets: -1 0 5 0, 0 1 6 1, 1 2 7 2;
+    -fx-padding: 4 4 9 4;
+    -fx-background-radius: 10;
+}
+
+.tab-pane:bottom > .tab-header-area > .control-buttons-tab > .container > .tab-down-button {
+    -fx-padding: -5 4 4 4; /* TODO convert to ems */
+}
+
+/* FLOATING TABS CUSTOMISATION */
+.tab-pane.floating > .tab-header-area > .tab-header-background {
+    -fx-background-color: null;
+}
+
+.tab-pane.floating > .tab-header-area {
+    -fx-background-color: null;
+}
+
+.tab-pane.floating > .tab-content-area {
+    -fx-background-color: -fx-outer-border, -fx-background;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 2, 0;
+    -fx-padding: 2;
+}
+
+/* TextArea */
+
+.text-area {
+    -fx-padding: 0;
+    -fx-cursor: default;
+    -fx-background-color: -fx-color-panel-200;
+    -fx-background-radius: 0;
+}
+
+.text-area > .scroll-pane {
+    -fx-background-color: null;
+}
+
+.text-area > .scroll-pane > .scroll-bar:horizontal {
+    -fx-background-radius: 0 0 2 2;
+}
+
+.text-area > .scroll-pane > .scroll-bar:vertical {
+    -fx-background-radius: 0 2 2 0;
+}
+
+.text-area > .scroll-pane > .corner {
+    -fx-background-radius: 0 0 2 0;
+}
+
+.text-area .content {
+    /*the is 1px less top and bottom than TextInput because of scrollpane border */
+    -fx-padding: 0.25em 0.583em 0.25em 0.583em; /* 3 7 3 7 */
+    -fx-cursor: text;
+    -fx-background-color: -fx-color-panel-200;
+    -fx-background-radius: 0;
+}
+
+.text-area:focused .content {
+    -fx-background-color: -fx-color-panel-200;;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+/* Buttons */
+
+.button,
+.toggle-button,
+.radio-button > .radio,
+.check-box > .box,
+.choice-box,
+.color-picker.split-button > .color-picker-label {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 4, 8, 4, 8; /* 4 8 4 8 */
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+    -fx-cursor: hand;
+    -fx-effect: null;
+}
+
+.button:default {
+    -fx-text-fill: white;
+}
+
+.combo-box-base,
+.combo-box-base:editable > .arrow-button {
+    -fx-body-color: transparent;
+    -fx-background-radius: 0;
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-0 0%,
+    -fx-color-0 8%,
+    transparent 8%);
+    -fx-padding: 0, 0, 0, 0; /* 4 8 4 8 */
+    -fx-text-fill: -fx-text-base-color;
+    -fx-prompt-text-fill: -fx-text-inner-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+    -fx-cursor: hand;
+    -fx-effect: null;
+}
+
+.combo-box-base > .list-cell {
+    -fx-padding: 0 2 0 2;
+}
+
+.combo-box-base .arrow,
+.combo-box-base:hover .arrow {
+    -fx-background-color: -fx-color-panel-50;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.button:hover,
+.toggle-button:hover,
+.radio-button:hover > .radio,
+.check-box:hover > .box,
+.split-menu-button > .label:hover,
+.split-menu-button > .arrow-button:hover,
+.slider .thumb:hover,
+.scroll-bar > .thumb:hover,
+.scroll-bar > .increment-button:hover,
+.scroll-bar > .decrement-button:hover,
+.choice-box:hover,
+.color-picker.split-button > .arrow-button:hover,
+.color-picker.split-button > .color-picker-label:hover,
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:hover {
+    -fx-body-color: -fx-button-background-hover;
+}
+
+.combo-box-base:hover,
+.combo-box-base:editable > .arrow-button:hover {
+}
+
+.button:armed,
+.toggle-button:armed,
+.radio-button:armed > .radio,
+.check-box:armed .box,
+.split-menu-button:armed > .label,
+.split-menu-button > .arrow-button:pressed,
+.split-menu-button:showing > .arrow-button,
+.slider .thumb:pressed,
+.scroll-bar > .thumb:pressed,
+.scroll-bar > .increment-button:pressed,
+.scroll-bar > .decrement-button:pressed,
+.choice-box:showing,
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:pressed {
+    -fx-body-color: -fx-button-background-arm;
+}
+
+.button:focused,
+.toggle-button:focused,
+.radio-button:focused > .rado,
+.check-box:focused > .box,
+.choice-box:focused,
+.color-picker.split-button:focused > .color-picker-label,
+.slider:focused .thumb {
+}
+
+.combo-box-base:focused {
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-500 0%,
+    -fx-color-500 8%,
+    transparent 8%);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+.check-box .box {
+    -fx-border-color: -fx-color-0;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-border-insets: 0;
+    -fx-padding: 2;
+}
+
+.check-box:selected .box {
+    -fx-border-color: -fx-color-500;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-border-insets: 0;
+    -fx-padding: 2;
+    -fx-background-color: -fx-color-500;
+    -fx-background-radius: 2px;
+}
+
+.check-box .mark {
+    -fx-border-width: 0;
+    -fx-effect: null;
+}
+
+.check-box:hover .mark {
+    -fx-effect: null;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: -fx-background-background;
+    -fx-effect: null;
+}
+
+/* MenuBar */
+
+.menu-bar {
+    -fx-padding: 0.0em 0.666667em 0.0em 0.666667em; /* 0 8 0 8 */
+    -fx-spacing: 0.166667em; /* 2 */
+    -fx-background-color: -fx-color-panel-200;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-effect: -fx-material-shadow-panel;
+}
+
+/* MenuItem */
+
+.menu-item {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color;
+    -fx-padding: 6 14 6 14; /* 4 5 4 5 */
+    -fx-cursor: hand;
+}
+
+.menu-item > .left-container {
+    -fx-padding: 0.458em 0.791em 0.458em 0.458em;
+}
+
+.menu-item > .graphic-container {
+    -fx-padding: 0em 0.333em 0em 0em;
+}
+
+.menu-item > .label {
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14;
+    -fx-padding: 0em 0.5em 0em 0em;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.menu-item:focused {
+    -fx-body-color: -fx-button-background-hover;
+}
+
+.menu-item:focused > .label {
+    -fx-text-fill: white;
+}
+
+.menu-item:hover > .label {
+    -fx-text-fill: white;
+}
+
+.menu-item > .right-container {
+    -fx-padding: 0em 0em 0em 0.5em;
+}
+
+.menu-item:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-fill;
+}
+
+.menu {
+    -fx-cursor: hand;
+}
+
+.tooltip {
+    -fx-background-color: -fx-color-panel-900;
+    -fx-background-radius: 0;
+    -fx-effect: -fx-material-shadow-panel;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14;
+}
+
+/* Toggle Button */
+.toggle-button {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0; /* 4 8 4 8 */
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: CENTER;
+    -fx-cursor: hand;
+    -fx-effect: null;
+}
+
+.toggle-button:selected {
+    -fx-body-color: -fx-color-500;
+}
+
+/* ColorPicker */
+
+.color-picker {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-0 0%,
+    -fx-color-0 8%,
+    transparent 8%);
+}
+
+.color-palette-region {
+    -fx-background-color: transparent;
+}
+
+.color-picker-grid {
+    -fx-vgap: 0px;
+    -fx-hgap: 0px;
+}
+
+.color-palette {
+    -fx-background-color: -fx-background-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2px;
+    -fx-effect: -fx-material-shadow-control;
+}
+
+.hover-square {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+/* CustomColorDialog */
+
+.custom-color-dialog {
+    -fx-background-color: -fx-background-background;
+    -fx-padding: 1.25em;
+    -fx-spacing: 1.25em;
+}
+
+.custom-color-dialog > .color-rect-pane {
+    -fx-spacing: 0.75em;
+    -fx-pref-height: 16.666667em;
+    -fx-alignment: top-left;
+    -fx-fill-height: true;
+}
+
+.custom-color-dialog .color-rect-pane .color-rect {
+    -fx-min-width: 16.666667em;
+    -fx-min-height: 16.666667em;
+}
+
+.custom-color-dialog > .color-rect-pane > .color-bar {
+    -fx-min-width: 1.666667em;
+    -fx-min-height: 16.666667em;
+    -fx-max-width: 1.666667em;
+    -fx-border-color: derive(-fx-base, -20%);
+}
+
+.custom-color-dialog .color-rect-pane .color-rect-border {
+    -fx-border-color: derive(-fx-base, -20%);
+}
+
+.custom-color-dialog > .color-rect-pane #color-rect-indicator {
+    -fx-border-color: white;
+    -fx-border-radius: 0.4166667em;
+    -fx-translate-x: -0.4166667em;
+    -fx-translate-y: -0.4166667em;
+    -fx-pref-width: 0.833333em;
+    -fx-pref-height: 0.833333em;
+    -fx-effect: -fx-material-shadow-control;
+}
+
+.custom-color-dialog > .color-rect-pane > .color-bar > #color-bar-indicator {
+    -fx-border-radius: 0;
+    -fx-border-color: white;
+    -fx-pref-width: 2em;
+    -fx-pref-height: 0.833333em;
+    -fx-translate-x: -0.1666667em;
+    -fx-translate-y: -0.4166667em;
+    -fx-effect: -fx-material-shadow-control;
+}
+
+.custom-color-dialog .controls-pane .current-new-color-grid #current-new-color-border {
+    -fx-border-color: derive(-fx-base, -20%);
+    -fx-border-width: 2px;
+}
+
+.custom-color-dialog .controls-pane #spacer1 {
+    -fx-min-height: 0.1666667em;
+    -fx-max-height: 0.1666667em;
+    -fx-pref-height: 0.1666667em;
+}
+
+.custom-color-dialog .transparent-pattern {
+    -fx-background-image: url("/com/sun/javafx/scene/control/skin/modena/pattern-transparent.png");
+    -fx-background-repeat: repeat;
+    -fx-background-size: auto;
+}
+
+.custom-color-dialog .controls-pane #spacer2 {
+    -fx-min-height: 1em;
+    -fx-max-height: 1em;
+    -fx-pref-height: 1em;
+}
+
+.custom-color-dialog .controls-pane #settings-pane {
+    -fx-background-color: -fx-background-dialogs;
+    -fx-hgap: 0.4166667em;
+    -fx-vgap: 0.3333333em;
+    -fx-padding: 0 0 4px 0;
+}
+
+.custom-color-dialog .controls-pane .customcolor-controls-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.custom-color-dialog .controls-pane #spacer-side {
+    -fx-min-width: 0.5em;
+    -fx-pref-width: 0.5em;
+}
+
+.custom-color-dialog .controls-pane .current-new-color-grid .label {
+    -fx-padding: 0 0 0 0.4166667em;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 15px;
+}
+
+.custom-color-dialog .controls-pane #settings-pane .settings-unit {
+    -fx-max-width: 1em;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.custom-color-dialog .controls-pane #settings-pane .slider {
+    -fx-pref-width: 8.25em;
+}
+
+.custom-color-dialog .controls-pane .color-input-field {
+    -fx-pref-column-count: 3;
+    -fx-max-width: 3.25em;
+    -fx-min-width: 3.25em;
+    -fx-pref-width: 3.25em;
+    -fx-min-height: 20px;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.custom-color-dialog .controls-pane .web-field {
+    -fx-pref-column-count: 6;
+    -fx-pref-width: 8.25em;
+    -fx-min-height: 20px;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.custom-color-dialog .controls-pane #settings-pane .settings-label {
+    -fx-text-alignment: right;
+    -fx-alignment: center-right;
+    -fx-min-width: 110px;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.custom-color-dialog .controls-pane #spacer-bottom {
+    -fx-pref-height: 0.833333em;
+    -fx-min-height: 0.833333em;
+}
+
+.custom-color-dialog .controls-pane #buttons-hbox {
+    -fx-spacing: 0.333333em;
+    -fx-padding: 1em 0 0 0;
+    -fx-alignment: bottom-right;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 16px;
+}
+
+.custom-color-dialog .controls-pane #settings-pane .left-pill {
+    -fx-min-width: 70px;
+    -fx-min-height: 24px;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 15px;
+}
+
+.custom-color-dialog .controls-pane #settings-pane .center-pill {
+    -fx-min-width: 70px;
+    -fx-min-height: 24px;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 15px;
+}
+
+.custom-color-dialog .controls-pane #settings-pane .right-pill {
+    -fx-min-width: 70px;
+    -fx-min-height: 24px;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 15px;
+}
+
+.custom-color-dialog .controls-pane .current-new-color-grid .color-rect {
+    -fx-min-width: 10.666667em;
+    -fx-min-height: 1.75em;
+    -fx-pref-width: 10.666667em;
+    -fx-pref-height: 1.75em;
+}
+
+/* Spinner */
+
+.spinner {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.spinner:focused,
+.spinner:contains-focus {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.spinner > .text-field {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-0 0%,
+    -fx-color-0 8%,
+    transparent 8%);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.spinner:focused > .text-field,
+.spinner:contains-focus > .text-field {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-500 0%,
+    -fx-color-500 8%,
+    transparent 8%);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.spinner .increment-arrow {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.spinner .increment-arrow-button {
+    -fx-background-color: transparent;
+    /*Change the two 0's here to -1 to get rid of the horizontal line */
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-padding: 0.333335em 0.666667em 0.333335em 0.666667em; /* 5 8 3 8 */
+}
+
+.spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-padding: 0.333335em 0.666667em 0.333335em 0.666667em; /* 3 8 5 8 */
+}
+
+.spinner:focused .increment-arrow-button,
+.spinner:contains-focus .increment-arrow-button,
+.spinner:focused .decrement-arrow-button,
+.spinner:contains-focus .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 -1 0, 0;
+    -fx-padding: 0.166667em 0.333333em 0.166667em 0.333333em; /* 2 4 2 4 */
+    -fx-shape: "M 0 4 h 7 l -3.5 -4 z";
+}
+
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 -1 0, 0;
+    -fx-padding: 0.166667em 0.333333em 0.166667em 0.333333em; /* 2 4 2 4 */
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+/** Text Field  */
+.text-input {
+    -fx-body-color: transparent;
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-0 0%,
+    -fx-color-0 8%,
+    transparent 8%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0;
+    -fx-highlight-fill: derive(-fx-control-inner-background, -20%);
+    -fx-highlight-text-fill: -fx-text-inner-color;
+    -fx-prompt-text-fill: -fx-text-inner-color;
+    -fx-cursor: text;
+    -fx-padding: 0 2 0 2;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-effect: null;
+}
+
+.text-input:focused {
+    -fx-highlight-fill: -fx-accent;
+    -fx-highlight-text-fill: white;
+    -fx-prompt-text-fill: transparent;
+    -fx-background-color: -fx-body-color, linear-gradient(to top,
+    -fx-color-500 0%,
+    -fx-color-500 8%,
+    transparent 8%);
+}
+
+/* TextArea */
+
+.text-area {
+    -fx-padding: 0;
+    -fx-cursor: default;
+    -fx-background-color: transparent;
+}
+
+.text-area > .scroll-pane {
+    -fx-background-color: null;
+}
+
+.text-area > .scroll-pane > .scroll-bar:horizontal {
+    -fx-background-radius: 0 0 2 2;
+}
+
+.text-area > .scroll-pane > .scroll-bar:vertical {
+    -fx-background-radius: 0 2 2 0;
+}
+
+.text-area > .scroll-pane > .corner {
+    -fx-background-radius: 0 0 2 0;
+}
+
+.text-area .content {
+    /*the is 1px less top and bottom than TextInput because of scrollpane border */
+    -fx-padding: 3 3 3 3; /* 3 7 3 7 */
+    -fx-cursor: text;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.text-area:focused .content {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+/* ComboBox Popup */
+
+.combo-box-popup > .list-view {
+    -fx-background-color: -fx-color-panel-900;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-effect: -fx-material-shadow-panel;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-padding: 4 0 4 5;
+    /* No alternate highlighting */
+    -fx-background: transparent;
+    -fx-background-insets: 0;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+    -fx-background: -fx-accent;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+    -fx-background: -fx-accent;
+}
+
+.combo-box-popup > .list-view > .placeholder > .label {
+    -fx-text-fill: derive(-fx-control-inner-background, -30%);
+}
+
+
+/* Slider */
+
+.slider .thumb {
+    -fx-background-color: -fx-color-panel-100;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px;
+    -fx-effect: null;
+}
+.slider:focused .thumb {
+    -fx-background-color: -fx-color-600;
+}
+
+.slider .track {
+    -fx-background-color: -fx-color-panel-100;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 2px 3px 2px 3px;
+}
+
+.slider:focused .track {
+    -fx-background-color: -fx-color-600;
+}
+
+.slider:vertical .track {
+}
+.slider .axis {
+}

@@ -1,14 +1,15 @@
 package com.ss.client.ui.scene.builder.impl;
 
-import static javafx.geometry.Pos.CENTER;
 import static javafx.scene.paint.Color.TRANSPARENT;
 import static rlib.ui.util.FXUtils.bindFixedSize;
+import com.ss.client.ui.css.CSSIds;
 import com.ss.client.ui.scene.UIScene;
 import com.ss.client.ui.scene.builder.UISceneBuilder;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
 import org.jetbrains.annotations.NotNull;
+import rlib.ui.util.FXUtils;
 
 /**
  * The base implementation of scene builder.
@@ -33,7 +34,9 @@ public abstract class AbstractUISceneBuilder implements UISceneBuilder {
         stylesheets.add(CSS_FILE_CUSTOM_CLASSES);
 
         final StackPane container = scene.getContainer();
-        container.setAlignment(CENTER);
+        container.setId(CSSIds.SCENE_ROOT);
+
+        FXUtils.addDebugBackgroundColor(container);
 
         fillScene(scene, container);
 

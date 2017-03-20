@@ -4,7 +4,7 @@ import static javafx.geometry.Pos.CENTER;
 import static javafx.util.Duration.millis;
 import com.ss.client.ui.FullScreenComponentSupport;
 import com.ss.client.ui.HasMenu;
-import com.ss.client.ui.component.ScreenComponent;
+import com.ss.client.ui.component.UIComponent;
 import com.ss.client.ui.util.UIUtils;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
@@ -58,7 +58,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
      * Список компонентов в сцене.
      */
     @NotNull
-    private final Array<ScreenComponent> components;
+    private final Array<UIComponent> components;
 
     /**
      * Активна ли сейчас сцена.
@@ -105,12 +105,12 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
     /**
      * Текущий показанный полноэкранный компонент.
      */
-    private ScreenComponent fullscreenComponent;
+    private UIComponent fullscreenComponent;
 
     public UIScene(final Group root) {
         super(root);
 
-        this.components = ArrayFactory.newArray(ScreenComponent.class);
+        this.components = ArrayFactory.newArray(UIComponent.class);
         this.active = new AtomicBoolean();
         this.indicatorReference = new AtomicReference<>();
         this.activateHandlers = ArrayFactory.newArray(Runnable.class);
@@ -238,11 +238,11 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
      * @param id ид интересуемого компонента.
      * @return искомый компонент либо <code>null</code>.
      */
-    public <T extends ScreenComponent> T findComponent(final String id) {
+    public <T extends UIComponent> T findComponent(final String id) {
 
-        final Array<ScreenComponent> components = getComponents();
+        final Array<UIComponent> components = getComponents();
 
-        for (final ScreenComponent component : components.array()) {
+        for (final UIComponent component : components.array()) {
 
             if (component == null) {
                 break;
@@ -264,7 +264,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
     /**
      * @return список компонентов в сцене.
      */
-    public Array<ScreenComponent> getComponents() {
+    public Array<UIComponent> getComponents() {
         return components;
     }
 
@@ -285,7 +285,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
     /**
      * @return текущий показанный полноэкранный компонент.
      */
-    protected ScreenComponent getFullscreenComponent() {
+    protected UIComponent getFullscreenComponent() {
         return fullscreenComponent;
     }
 
@@ -355,7 +355,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
      */
     public void notifyPostActivate() {
 
-        for (final ScreenComponent component : getComponents()) {
+        for (final UIComponent component : getComponents()) {
             try {
                 component.notifyPostActivate();
             } catch (final Throwable e) {
@@ -374,7 +374,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
     public void notifyPostDeactivate() {
         setActive(false);
 
-        for (final ScreenComponent component : getComponents()) {
+        for (final UIComponent component : getComponents()) {
             component.notifyPostDeactivate();
         }
     }
@@ -395,7 +395,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
             handler.run();
         }
 
-        for (final ScreenComponent component : getComponents()) {
+        for (final UIComponent component : getComponents()) {
             component.notifyPreActivate();
         }
     }
@@ -405,7 +405,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
      */
     public void notifyPreDeactivate() {
 
-        for (final ScreenComponent component : getComponents()) {
+        for (final UIComponent component : getComponents()) {
             component.notifyPreDeactivate();
         }
 
@@ -422,14 +422,14 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
     }
 
     @Override
-    public void onHide(final ScreenComponent component) {
+    public void onHide(final UIComponent component) {
         if (component == fullscreenComponent) {
             this.fullscreenComponent = null;
         }
     }
 
     @Override
-    public void onShow(final ScreenComponent component) {
+    public void onShow(final UIComponent component) {
         this.fullscreenComponent = component;
     }
 
@@ -455,7 +455,7 @@ public class UIScene extends Scene implements FullScreenComponentSupport {
             }
         }
 
-        for (final ScreenComponent component : getComponents()) {
+        for (final UIComponent component : getComponents()) {
             component.notifyKeyReleased(event);
         }
     }

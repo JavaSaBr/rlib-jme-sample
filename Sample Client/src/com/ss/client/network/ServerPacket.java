@@ -1,10 +1,13 @@
 package com.ss.client.network;
 
+import com.ss.client.manager.FXEventManager;
 import com.ss.client.network.model.GameServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rlib.geom.Vector3f;
 import rlib.network.packet.impl.AbstractRunnableReadablePacket;
+
+import java.nio.ByteBuffer;
 
 /**
  * The base implementation of the packet from Server.
@@ -12,6 +15,9 @@ import rlib.network.packet.impl.AbstractRunnableReadablePacket;
  * @author JavaSaBr
  */
 public abstract class ServerPacket extends AbstractRunnableReadablePacket {
+
+    @NotNull
+    protected static final FXEventManager FX_EVENT_MANAGER = FXEventManager.getInstance();
 
     @Override
     public boolean isSynchronized() {
@@ -25,18 +31,15 @@ public abstract class ServerPacket extends AbstractRunnableReadablePacket {
         return false;
     }
 
-    @Override
-    protected void readImpl() {
-    }
-
     /**
      * Read a vector value.
      *
+     * @param buffer the buffer with data.
      * @return the vector value.
      */
     @NotNull
-    protected final Vector3f readVector() {
-        return Vector3f.newInstance(readFloat(), readFloat(), readFloat());
+    protected final Vector3f readVector(@NotNull final ByteBuffer buffer) {
+        return Vector3f.newInstance(readFloat(buffer), readFloat(buffer), readFloat(buffer));
     }
 
     @Nullable

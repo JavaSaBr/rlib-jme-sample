@@ -1,6 +1,6 @@
 package com.ss.client.ui;
 
-import com.ss.client.ui.component.ScreenComponent;
+import com.ss.client.ui.component.UIComponent;
 
 /**
  * Интерфейс для реалзиации поддержки полноэкранных компонентов.
@@ -14,12 +14,12 @@ public interface FullScreenComponentSupport {
 	 * 
 	 * @param component показанный компонент.
 	 */
-	public void onShow(ScreenComponent component);
+	public void onShow(UIComponent component);
 
 	/**
 	 * Уведомление о закрытии полноэкранного компонента.
 	 * 
 	 * @param component закрытый компонент.
 	 */
-	public void onHide(ScreenComponent component);
+	public void onHide(UIComponent component);
 }

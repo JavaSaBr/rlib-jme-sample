@@ -1,0 +1,197 @@
+
+.special-font-12 {
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 12px;
+}
+
+.special-font-13 {
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 13px;
+}
+
+.special-font-14 {
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.special-font-15 {
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 15px;
+}
+
+.special-font-16 {
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 16;
+}
+
+.mono-font-13 {
+    -fx-font-family: "Ubuntu Mono";
+    -fx-font-size: 13px;
+}
+
+/* Transparent TreeView */
+.transparent-tree-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-effect: null;
+    -fx-cell-size: 10;
+}
+
+.transparent-tree-view:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-effect: null;
+}
+
+.transparent-tree-view > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected {
+    -fx-background: -fx-color-600;
+    -fx-background-insets: 0;
+    -fx-table-cell-border-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.transparent-tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected {
+    -fx-background: -fx-color-600;
+    -fx-background-insets: 0;
+    -fx-table-cell-border-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+/* Transparent TreeCell */
+
+.transparent-tree-cell {
+    -fx-background: transparent;
+    -fx-padding: 0.25em; /* 3 */
+    -fx-indent: 1em;
+}
+
+.transparent-tree-cell .label {
+    -fx-padding: 0.0em 0.0em 0.0em 0.25em; /* 0 0 0 3 */
+}
+
+.transparent-tree-cell > .tree-disclosure-node {
+    -fx-padding: 2 6 2 8;
+    -fx-background-color: transparent;
+}
+
+.transparent-tree-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: -fx-font-color;
+    -fx-padding: 0.333333em 0.229em 0.333333em 0.229em; /* 4 */
+    -fx-shape: "M 0 -3.5 L 4 0 L 0 3.5 z";
+}
+
+.transparent-tree-cell:expanded > .tree-disclosure-node > .arrow {
+    -fx-rotate: 90;
+}
+
+/* transparent list view */
+
+.transparent-list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-effect: null;
+}
+
+.transparent-list-view:focused {
+    -fx-background-color: transparent;
+}
+
+.transparent-list-view > .virtual-flow > .corner {
+    -fx-background-color: derive(-fx-base, -1%);
+}
+
+.transparent-list-view:focused > .virtual-flow > .clipped-container > .sheet > .transparent-list-cell:filled:selected {
+    -fx-background: -fx-color-500;
+    -fx-table-cell-border-color: transparent;
+    -fx-text-fill: -fx-font-color;
+}
+
+.transparent-list-view:focused > .virtual-flow > .clipped-container > .sheet > .transparent-list-cell:focused {
+    -fx-background-color: -fx-background;
+    -fx-background-insets: 0;
+    -fx-text-fill: -fx-font-color;
+}
+
+/* list view without scrolls */
+
+.list-view-without-scroll .scroll-bar:vertical,
+.list-view-without-scroll .scroll-bar:horizontal,
+.list-view-without-scroll .scroll-bar:vertical .increment-arrow,
+.list-view-without-scroll .scroll-bar:vertical .decrement-arrow,
+.list-view-without-scroll .scroll-bar:vertical .increment-button,
+.list-view-without-scroll .scroll-bar:vertical .decrement-button,
+.list-view-without-scroll .scroll-bar:horizontal .increment-arrow,
+.list-view-without-scroll .scroll-bar:horizontal .decrement-arrow,
+.list-view-without-scroll .scroll-bar:horizontal .increment-button,
+.list-view-without-scroll .scroll-bar:horizontal .decrement-button {
+    -fx-padding: 0;
+}
+
+/* transparent list cell */
+
+.transparent-list-cell {
+    -fx-background: transparent;
+    -fx-background-color: -fx-background;
+    -fx-text-fill: -fx-font-color;
+}
+
+.transparent-list-cell:filled:selected {
+    -fx-background: -fx-selection-bar-non-focused;
+    -fx-table-cell-border-color: transparent;
+    -fx-text-fill: -fx-font-color;
+}
+
+/* list cell without any padding */
+
+.list-cell-without-padding {
+    -fx-padding: 0;
+}
+
+.list-cell-without-padding:filled:selected {
+    -fx-padding: 0;
+}
+
+.transparent-menu-item {
+}
+
+.transparent-combo-box,
+.transparent-combo-box:editable,
+.transparent-combo-box:editable > .arrow-button {
+    -fx-background-color: -fx-body-color;
+}
+
+.login-auth-panel-label {
+    -fx-min-width: 100px;
+    -fx-max-width: -fx-min-width;
+    -fx-min-height: 24px;
+    -fx-max-height: -fx-min-height;
+    -fx-text-alignment: right;
+    -fx-alignment: center-right;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.login-auth-panel-field {
+    -fx-min-width: 150px;
+    -fx-max-width: -fx-min-width;
+    -fx-min-height: 24px;
+    -fx-max-height: -fx-min-height;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 14px;
+}
+
+.button-size-1 {
+    -fx-min-width: 150px;
+    -fx-max-width: -fx-min-width;
+    -fx-min-height: 26px;
+    -fx-max-height: -fx-min-height;
+    -fx-font-family: "Ubuntu Condensed";
+    -fx-font-size: 16px;
+}
