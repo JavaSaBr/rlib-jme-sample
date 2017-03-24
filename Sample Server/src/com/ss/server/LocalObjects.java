@@ -1,5 +1,6 @@
 package com.ss.server;
 
+import com.ss.server.model.GameObject;
 import org.jetbrains.annotations.NotNull;
 import rlib.geom.Quaternion4f;
 import rlib.geom.Vector3f;
@@ -78,6 +79,12 @@ public final class LocalObjects implements Vector3fBuffer {
     @NotNull
     private final CycleBuffer<Array<Vector3f>> vectorListsBuffer;
 
+    /**
+     * The object lists buffer.
+     */
+    @NotNull
+    private final CycleBuffer<Array<GameObject>> objectListsBuffer;
+
     public LocalObjects(@NotNull final Thread thread) {
         this.thread = thread;
         this.random = RandomFactory.newFastRandom();
@@ -86,6 +93,8 @@ public final class LocalObjects implements Vector3fBuffer {
         this.vectorBuffersBuffer = new CycleBuffer<>(Vector3fBuffer.class, DEFAULT_BUFFER_SIZE, Vector3fBufferImpl::new);
         this.vectorListsBuffer = new CycleBuffer<>(Array.class, DEFAULT_BUFFER_SIZE,
                 () -> ArrayFactory.newArray(Vector3f.class), Collection::clear);
+        this.objectListsBuffer = new CycleBuffer<>(Array.class, DEFAULT_BUFFER_SIZE,
+                () -> ArrayFactory.newArray(GameObject.class), Collection::clear);
     }
 
     /**
@@ -116,6 +125,14 @@ public final class LocalObjects implements Vector3fBuffer {
     @NotNull
     public Array<Vector3f> nextVectorArray() {
         return vectorListsBuffer.next();
+    }
+
+    /**
+     * @return the next free objects array.
+     */
+    @NotNull
+    public Array<GameObject> nextObjectArray() {
+        return objectListsBuffer.next();
     }
 
     /**

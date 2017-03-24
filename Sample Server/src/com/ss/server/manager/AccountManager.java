@@ -2,9 +2,11 @@ package com.ss.server.manager;
 
 import static java.util.Objects.requireNonNull;
 import com.ss.server.Config;
+import com.ss.server.LocalObjects;
 import com.ss.server.ServerThread;
 import com.ss.server.database.AccountDBManager;
 import com.ss.server.model.Account;
+import com.ss.server.model.player.Player;
 import com.ss.server.network.model.GameClient;
 import com.ss.server.network.packet.server.AuthResultServerPacket.ResultType;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +76,7 @@ public final class AccountManager implements Runnable {
     @NotNull
     public ResultType auth(@NotNull final GameClient client, @NotNull final String name, @NotNull final String password) {
 
+        final LocalObjects local = LocalObjects.get();
         final String lowerName = name.toLowerCase();
         final AccountDBManager dbManager = AccountDBManager.getInstance();
 
@@ -84,7 +87,7 @@ public final class AccountManager implements Runnable {
             Account account = accounts.get(lowerName);
 
             if (account == null) {
-                account = dbManager.findAccount(name);
+                account = dbManager.findByName(name);
             }
 
             if (account == null) {
@@ -96,14 +99,18 @@ public final class AccountManager implements Runnable {
 
                 LOGGER.warning("try auto create account for login " + name);
 
-                account = dbManager.createAccount(name, password);
+                // try to create a new account
+                account = dbManager.create(name, password);
+
+                // if account was created try to create a player for this
+                final PlayerManager playerManager = PlayerManager.getInstance();
+                final Player player = account == null ? null : playerManager.createNewPlayer(account, local);
+                if (player != null) player.deleteMe(local);
             }
 
             if (account == null) {
                 return ResultType.INCORRECT_NAME;
-            }
-
-            if (!StringUtils.equals(password, account.getPassword())) {
+            } else if (!StringUtils.equals(password, account.getPassword())) {
                 return ResultType.INCORRECT_PASSWORD;
             }
 

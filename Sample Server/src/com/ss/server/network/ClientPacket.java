@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rlib.network.packet.impl.AbstractTaskReadablePacket;
 
+import java.nio.ByteBuffer;
+
 /**
  * The base implementation of readable packet.
  *
@@ -18,7 +20,8 @@ public abstract class ClientPacket extends AbstractTaskReadablePacket<LocalObjec
     }
 
     @Override
-    protected void readImpl() {
+    protected void readImpl(@NotNull final ByteBuffer buffer) {
+        super.readImpl(buffer);
     }
 
     @Nullable

@@ -1,10 +1,9 @@
 package com.ss.server;
 
 import com.ss.server.database.AccountDBManager;
-import com.ss.server.manager.DataBaseManager;
-import com.ss.server.manager.AccountManager;
-import com.ss.server.manager.ClassManager;
-import com.ss.server.manager.ExecutorManager;
+import com.ss.server.database.PlayerDBManager;
+import com.ss.server.database.PlayerVehicleDBManager;
+import com.ss.server.manager.*;
 import com.ss.server.network.Network;
 import org.jetbrains.annotations.NotNull;
 import rlib.compiler.CompilerFactory;
@@ -98,8 +97,12 @@ public class GameServer extends ServerThread {
             InitializeManager.register(ExecutorManager.class);
             InitializeManager.register(DataBaseManager.class);
             InitializeManager.register(AccountDBManager.class);
+            InitializeManager.register(PlayerDBManager.class);
+            InitializeManager.register(PlayerVehicleDBManager.class);
+            InitializeManager.register(PlayerManager.class);
             InitializeManager.register(AccountManager.class);
             InitializeManager.register(ClassManager.class);
+            InitializeManager.register(VehicleTemplateManager.class);
             InitializeManager.register(Network.class);
             InitializeManager.initialize();
 

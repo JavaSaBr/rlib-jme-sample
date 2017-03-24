@@ -24,4 +24,36 @@ public interface SqlProvider {
      */
     @NotNull
     String selectAccountByNameQuery();
+
+    /**
+     * Params: 1 - account id.
+     *
+     * @return the query to inset a new player.
+     */
+    @NotNull
+    String insertPlayerQuery();
+
+    /**
+     * Params: 1 - vehicle id, 2 - object id.
+     *
+     * @return the query to update a current vehicle of a player.
+     */
+    @NotNull
+    String updatePlayerCurrentVehicleQuery();
+
+    /**
+     * Params: 1 - object id.
+     *
+     * @return the query to delete a player.
+     */
+    @NotNull
+    String deletePlayerQuery();
+
+    /**
+     * Params: 1 - player id, 2 - template id.
+     *
+     * @return the query to inset a new player vehicle.
+     */
+    @NotNull
+    String insertPlayerVehicleQuery();
 }

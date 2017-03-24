@@ -52,7 +52,7 @@ public final class Account implements Reusable {
     /**
      * The uniq id.
      */
-    private volatile long id;
+    private volatile int id;
 
     @Override
     public void free() {
@@ -126,14 +126,14 @@ public final class Account implements Reusable {
     /**
      * @return the uniq id.
      */
-    public long getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id the uniq id.
      */
-    public void setId(final long id) {
+    public void setId(final int id) {
         this.id = id;
     }
 

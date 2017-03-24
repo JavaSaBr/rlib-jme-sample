@@ -64,7 +64,7 @@ public class AccountDBManager implements DbTables {
      * @return the new account or null.
      */
     @Nullable
-    public Account createAccount(@NotNull final String name, @NotNull final String password) {
+    public Account create(@NotNull final String name, @NotNull final String password) {
 
         PreparedStatement statement = null;
         Connection con = null;
@@ -82,7 +82,7 @@ public class AccountDBManager implements DbTables {
             rset = statement.getGeneratedKeys();
             rset.next();
 
-            final long id = rset.getLong(1);
+            final int id = rset.getInt(1);
 
             final Account account = Account.newInstance();
             account.setId(id);
@@ -108,7 +108,7 @@ public class AccountDBManager implements DbTables {
      * @return the found account or null.
      */
     @Nullable
-    public Account findAccount(@NotNull final String name) {
+    public Account findByName(@NotNull final String name) {
 
         PreparedStatement statement = null;
         Connection con = null;
@@ -124,7 +124,7 @@ public class AccountDBManager implements DbTables {
             rset = statement.executeQuery();
             if (!rset.next()) return null;
 
-            final long id = rset.getLong(1);
+            final int id = rset.getInt(1);
             final String accountName = rset.getString(2);
             final String password = rset.getString(3);
 
