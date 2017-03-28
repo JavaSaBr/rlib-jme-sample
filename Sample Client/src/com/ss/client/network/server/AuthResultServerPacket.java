@@ -10,7 +10,7 @@ import rlib.network.packet.ReadablePacketType;
 import java.nio.ByteBuffer;
 
 /**
- * The packet with data about result authentication.
+ * The packet to receive data about result authentication.
  *
  * @author JavaSaBr
  */

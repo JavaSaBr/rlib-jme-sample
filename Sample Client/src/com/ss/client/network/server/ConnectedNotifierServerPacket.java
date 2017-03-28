@@ -11,7 +11,7 @@ import rlib.util.StringUtils;
 import java.nio.ByteBuffer;
 
 /**
- * The packet to notify client about successful connect to the server.
+ * The packet to receive notification about successful connect to the server.
  *
  * @author JavaSaBr
  */

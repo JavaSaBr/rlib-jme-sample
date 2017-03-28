@@ -1,8 +1,7 @@
 
 #SceneRoot {
     -fx-alignment: center;
-    -fx-background-image: url("/ui/background/galaxy.jpg");
-    -fx-background-repeat: repeat;
+    -fx-background-color: gray;
 }
 
 #LoginAuthPanel {

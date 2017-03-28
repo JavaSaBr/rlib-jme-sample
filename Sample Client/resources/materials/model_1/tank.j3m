@@ -1,0 +1,17 @@
+Material MyMaterial : Common/MatDefs/Light/Lighting.j3md {
+    MaterialParameters {
+        Diffuse : 1.0 1.0 1.0 1.0
+        UseMaterialColors : true
+        SpecularMap : textures/model_1/tank_specular.jpg
+        ParallaxHeight : 0.05
+        Ambient : 0.0 0.0 0.0 1.0
+        BackfaceShadows : false
+        GlowMap : textures/model_1/tank_glow_map.jpg
+        NormalMap : textures/model_1/tank_normals.png
+        DiffuseMap : textures/model_1/tank_diffuse.jpg
+        Specular : 1.0 1.0 1.0 1.0
+        Shininess : 8.0
+    }
+    AdditionalRenderState {
+    }
+}

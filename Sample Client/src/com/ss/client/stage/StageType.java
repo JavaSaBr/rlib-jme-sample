@@ -1,6 +1,7 @@
 package com.ss.client.stage;
 
 import com.ss.client.stage.impl.EmptyStage;
+import com.ss.client.stage.impl.HangarStage;
 import com.ss.client.stage.impl.LoginStage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +14,7 @@ import rlib.util.ClassUtils;
  */
 public enum StageType {
     LOGIN_STAGE(LoginStage.class),
-    HANGAR_STAGE(EmptyStage.class),
+    HANGAR_STAGE(HangarStage.class),
     GAME_STAGE(EmptyStage.class);
 
     /**

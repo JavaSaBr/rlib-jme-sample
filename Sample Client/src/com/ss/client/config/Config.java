@@ -6,7 +6,7 @@ import com.ss.client.document.DocumentConfig;
 import com.ss.client.util.GameUtil;
 import org.jetbrains.annotations.NotNull;
 import rlib.network.NetworkConfig;
-import rlib.util.Util;
+import rlib.util.Utils;
 import rlib.util.VarTable;
 
 import java.net.InetAddress;
@@ -139,6 +139,6 @@ public abstract class Config {
 
         DEV_DEBUG = vars.getBoolean("Dev.debug", false);
 
-        PROJECT_PATH = Util.getRootFolderFromClass(Starter.class).toString();
+        PROJECT_PATH = Utils.getRootFolderFromClass(Starter.class).toString();
     }
 }
