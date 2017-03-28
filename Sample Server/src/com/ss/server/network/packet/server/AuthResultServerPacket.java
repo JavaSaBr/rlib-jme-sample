@@ -49,7 +49,15 @@ public class AuthResultServerPacket extends ServerPacket {
     @Override
     protected void writeImpl(@NotNull final ByteBuffer buffer) {
         super.writeImpl(buffer);
-        writeByte(buffer, requireNonNull(resultType).ordinal());
+        writeByte(buffer, getResultType().ordinal());
+    }
+
+    /**
+     * @return the result type.
+     */
+    @NotNull
+    private ResultType getResultType() {
+        return requireNonNull(resultType);
     }
 
     @NotNull

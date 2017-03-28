@@ -41,7 +41,15 @@ public class ConnectedNotifierServerPacket extends ServerPacket {
     @Override
     protected void writeImpl(@NotNull final ByteBuffer buffer) {
         super.writeImpl(buffer);
-        writeString(buffer, requireNonNull(serverVersion));
+        writeString(buffer, getServerVersion());
+    }
+
+    /**
+     * @return the server version.
+     */
+    @NotNull
+    private String getServerVersion() {
+        return requireNonNull(serverVersion);
     }
 
     @Override

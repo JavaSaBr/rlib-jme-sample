@@ -3,6 +3,8 @@ package com.ss.server.template;
 import static java.util.Objects.requireNonNull;
 import static rlib.util.ClassUtils.getConstructor;
 import com.ss.server.model.GameObject;
+import com.ss.server.network.ServerPacket;
+import com.ss.server.template.view.ViewInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -12,6 +14,7 @@ import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
 
 import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 /**
@@ -22,6 +25,7 @@ import java.util.function.Function;
 public abstract class ObjectTemplate {
 
     public static final String PROP_TEMPLATE_ID = "id";
+    public static final String PROP_NAME = "name";
 
     /**
      * The pool of instances to reuse it.
@@ -36,6 +40,18 @@ public abstract class ObjectTemplate {
     private final Function<ObjectTemplate, GameObject> constructor;
 
     /**
+     * The information about view of objects of this template.
+     */
+    @NotNull
+    private final ViewInfo viewInfo;
+
+    /**
+     * The template name.
+     */
+    @NotNull
+    private final String name;
+
+    /**
      * The template id.
      */
     private final int templateId;
@@ -48,7 +64,9 @@ public abstract class ObjectTemplate {
      */
     public ObjectTemplate(@NotNull final VarTable vars, @Nullable final Element xmlElement) {
         this.instancePool = PoolFactory.newConcurrentAtomicARSWLockReusablePool(getInstanceClass());
+        this.viewInfo = new ViewInfo(xmlElement);
         this.templateId = vars.getInteger(PROP_TEMPLATE_ID, 0);
+        this.name = vars.getString(PROP_NAME, "no name");
         this.constructor = buildConstructor();
     }
 
@@ -97,5 +115,15 @@ public abstract class ObjectTemplate {
         object.setObjectId(objectId);
 
         return object;
+    }
+
+    /**
+     * Write data of this template to the buffer of the packet.
+     *
+     * @param packet the packet.
+     * @param buffer the buffer.
+     */
+    public void writeTo(@NotNull final ServerPacket packet, @NotNull final ByteBuffer buffer) {
+        viewInfo.writeTo(packet, buffer);
     }
 }

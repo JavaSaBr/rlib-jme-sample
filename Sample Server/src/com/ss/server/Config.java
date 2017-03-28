@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.FileUtils;
-import rlib.util.Util;
+import rlib.util.Utils;
 import rlib.util.VarTable;
 import rlib.util.array.Array;
 
@@ -208,7 +208,7 @@ public final class Config {
      */
     private static void initFolders() {
 
-        FOLDER_PROJECT_PATH = Util.getRootFolderFromClass(Config.class).toString();
+        FOLDER_PROJECT_PATH = Utils.getRootFolderFromClass(Config.class).toString();
 
         Path path = Paths.get(FOLDER_PROJECT_PATH, SCRIPTS_FOLDER_NAME);
 

@@ -15,7 +15,7 @@ import rlib.logging.impl.FolderFileListener;
 import rlib.manager.InitializeManager;
 import rlib.monitoring.MemoryMonitoring;
 import rlib.monitoring.MonitoringManager;
-import rlib.util.Util;
+import rlib.util.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,7 +77,7 @@ public class GameServer extends ServerThread {
 
         configureLogging();
 
-        Util.checkFreePort("*", Config.SERVER_PORT);
+        Utils.checkFreePort("*", Config.SERVER_PORT);
 
         final DataBaseManager manager = DataBaseManager.getInstance();
         manager.clean();
