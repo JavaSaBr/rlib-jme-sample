@@ -9,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
 import org.jetbrains.annotations.NotNull;
-import rlib.ui.util.FXUtils;
 
 /**
  * The base implementation of scene builder.
@@ -35,8 +34,6 @@ public abstract class AbstractUISceneBuilder implements UISceneBuilder {
 
         final StackPane container = scene.getContainer();
         container.setId(CSSIds.SCENE_ROOT);
-
-        FXUtils.addDebugBackgroundColor(container);
 
         fillScene(scene, container);
 

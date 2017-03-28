@@ -6,7 +6,9 @@ import com.ss.client.ui.scene.UISceneType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by ronn on 23.01.16.
+ * The implementation of login game stage.
+ *
+ * @author JavaSaBr
  */
 public class LoginStage extends AbstractStage {
 

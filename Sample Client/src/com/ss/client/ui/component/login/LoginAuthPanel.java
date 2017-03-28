@@ -2,8 +2,10 @@ package com.ss.client.ui.component.login;
 
 import static java.util.Objects.requireNonNull;
 import com.ss.client.Messages;
+import com.ss.client.model.impl.UserAccount;
 import com.ss.client.network.client.AuthCredentialsClientPacket;
 import com.ss.client.network.server.AuthResultServerPacket;
+import com.ss.client.stage.StageType;
 import com.ss.client.ui.component.impl.AbstractUIComponent;
 import com.ss.client.ui.css.CSSClasses;
 import com.ss.client.ui.css.CSSIds;
@@ -75,6 +77,13 @@ public class LoginAuthPanel extends AbstractUIComponent {
         final UIScene scene = (UIScene) getScene();
         scene.decrementWaiter();
         scene.hideLoading();
+
+        if (resultType == AuthResultServerPacket.ResultType.SUCCESSFUL) {
+            final UserAccount userAccount = GAME_CLIENT.getUserAccount();
+            userAccount.setName(getUsernameField().getText());
+            userAccount.setPassword(getPasswordField().getText());
+            GAME_CLIENT.gotoStage(StageType.HANGAR_STAGE);
+        }
     }
 
     @NotNull

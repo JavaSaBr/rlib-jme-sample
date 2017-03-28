@@ -2,6 +2,7 @@ package com.ss.client.ui.scene;
 
 import com.ss.client.ui.scene.builder.UISceneBuilder;
 import com.ss.client.ui.scene.builder.impl.EmptyUISceneBuilder;
+import com.ss.client.ui.scene.builder.impl.HangarUISceneBuilder;
 import com.ss.client.ui.scene.builder.impl.LoginUISceneBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ import rlib.util.ClassUtils;
  */
 public enum UISceneType {
     LOGIN_SCENE(LoginUISceneBuilder.class),
-    HANGAR_SCENE(EmptyUISceneBuilder.class),
+    HANGAR_SCENE(HangarUISceneBuilder.class),
     GAME_SCENE(EmptyUISceneBuilder.class),
     EMPTY_SCENE(EmptyUISceneBuilder.class);
 

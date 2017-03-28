@@ -1,5 +1,6 @@
 package com.ss.client.ui.component.impl;
 
+import com.ss.client.GameClient;
 import com.ss.client.manager.FXEventManager;
 import com.ss.client.network.Network;
 import com.ss.client.ui.component.UIComponent;
@@ -16,6 +17,9 @@ public abstract class AbstractUIComponent extends GridPane implements UIComponen
 
     @NotNull
     protected static final FXEventManager FX_EVENT_MANAGER = FXEventManager.getInstance();
+
+    @NotNull
+    protected static final GameClient GAME_CLIENT = GameClient.getInstance();
 
     @NotNull
     protected static final Network NETWORK = Network.getInstance();
