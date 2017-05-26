@@ -39,7 +39,7 @@ public final class LocalObjects implements Vector3fBuffer {
     }
 
     @NotNull
-    public static LocalObjects get() {
+    public static LocalObjects localObjects() {
         return ((ServerThread) Thread.currentThread()).getLocal();
     }
 

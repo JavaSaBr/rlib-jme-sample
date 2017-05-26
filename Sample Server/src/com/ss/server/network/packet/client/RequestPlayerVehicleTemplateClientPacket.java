@@ -18,11 +18,11 @@ import java.nio.ByteBuffer;
  *
  * @author JavaSaBr
  */
-public class PlayerVehicleTemplateClientPacket extends ClientPacket {
+public class RequestPlayerVehicleTemplateClientPacket extends ClientPacket {
 
     @NotNull
     private static final ReadablePacketType<ClientPacket> PLAYER_VEHICLE_TEMPLATE_TYPE =
-            new ReadablePacketType<>(new PlayerVehicleTemplateClientPacket(), 2);
+            new ReadablePacketType<>(new RequestPlayerVehicleTemplateClientPacket(), 2);
 
     /**
      * The template id.
@@ -58,6 +58,6 @@ public class PlayerVehicleTemplateClientPacket extends ClientPacket {
 
     @Override
     public String toString() {
-        return "PlayerVehicleTemplateClientPacket{" + "templateId=" + templateId + '}';
+        return "RequestPlayerVehicleTemplateClientPacket{" + "templateId=" + templateId + '}';
     }
 }

@@ -23,7 +23,7 @@ public class PlayerManager {
     @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(PlayerManager.class);
 
-    public static final int START_TEMPLATE_ID = 1;
+    private static final int START_TEMPLATE_ID = 1;
 
     private static PlayerManager instance;
 

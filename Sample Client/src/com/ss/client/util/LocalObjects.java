@@ -18,7 +18,7 @@ public class LocalObjects {
     private static final int SIZE = 20;
 
     @NotNull
-    public static LocalObjects get() {
+    public static LocalObjects localObjects() {
         return ((GameThread) Thread.currentThread()).getLocalObects();
     }
 

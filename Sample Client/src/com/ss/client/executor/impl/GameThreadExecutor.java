@@ -1,6 +1,7 @@
 package com.ss.client.executor.impl;
 
-import com.ss.client.GameClient;
+import static com.ss.client.GameClient.getCurrentTime;
+import static com.ss.client.util.LocalObjects.localObjects;
 import com.ss.client.game.task.GameTask;
 import com.ss.client.util.LocalObjects;
 import org.jetbrains.annotations.NotNull;
@@ -88,8 +89,8 @@ public class GameThreadExecutor {
                 waitTasks.writeUnlock(stamp);
             }
 
-            final LocalObjects local = LocalObjects.get();
-            final long currentTime = GameClient.getCurrentTime();
+            final LocalObjects local = localObjects();
+            final long currentTime = getCurrentTime();
 
             execute.forEach(currentTime, local, EXECUTE_FUNCTION);
 

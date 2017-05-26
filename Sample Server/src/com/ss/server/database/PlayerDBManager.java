@@ -87,9 +87,7 @@ public class PlayerDBManager implements DbTables {
             final int id = rset.getInt(1);
 
             final EmptyPlayerTemplate template = EmptyPlayerTemplate.getInstance();
-            final Player player = template.takeInstance(Player.class, id);
-
-            return player;
+            return template.takeInstance(Player.class, id);
 
         } catch (final SQLException e) {
             LOGGER.warning(e);

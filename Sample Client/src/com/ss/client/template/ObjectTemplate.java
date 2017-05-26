@@ -93,7 +93,7 @@ public abstract class ObjectTemplate {
      * @return the new instance.
      */
     @NotNull
-    public <T extends GameObject> T takeInstance(@NotNull final Class<T> type, final int objectId) {
+    public <T extends GameObject> T takeInstance(@NotNull final Class<T> type, final long objectId) {
 
         final T object = type.cast(instancePool.take(constructor, this, Function::apply));
         object.setObjectId(objectId);

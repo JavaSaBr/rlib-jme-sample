@@ -1,10 +1,11 @@
 package com.ss.server.network.model;
 
+import static com.ss.server.LocalObjects.localObjects;
 import com.ss.server.Config;
 import com.ss.server.manager.AccountManager;
 import com.ss.server.manager.ExecutorManager;
 import com.ss.server.model.Account;
-import com.ss.server.model.tank.PlayerTank;
+import com.ss.server.model.player.Player;
 import com.ss.server.network.ClientPacket;
 import com.ss.server.network.EmptyCrypt;
 import com.ss.server.network.ServerPacket;
@@ -18,7 +19,7 @@ import rlib.network.server.client.impl.AbstractClient;
  *
  * @author JavaSaBr
  */
-public class GameClient extends AbstractClient<Account, PlayerTank> {
+public class GameClient extends AbstractClient<Account, Player> {
 
     GameClient(@NotNull final GameConnection connection, @NotNull final EmptyCrypt crypt) {
         super(connection, crypt);
@@ -28,12 +29,19 @@ public class GameClient extends AbstractClient<Account, PlayerTank> {
     public void close() {
 
         final String name = getName();
+        final Player owner = getOwner();
+
+        if (owner != null) {
+            owner.deleteMe(localObjects());
+            setOwner(null);
+        }
 
         final AccountManager accountManager = AccountManager.getInstance();
         final Account account = getAccount();
 
         if (account != null) {
             accountManager.removeAccount(account);
+            setAccount(null);
         }
 
         LOGGER.info(this, "close client \"" + name + "\".");

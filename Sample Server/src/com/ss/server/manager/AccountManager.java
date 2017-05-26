@@ -1,5 +1,6 @@
 package com.ss.server.manager;
 
+import static com.ss.server.LocalObjects.localObjects;
 import static java.util.Objects.requireNonNull;
 import com.ss.server.Config;
 import com.ss.server.LocalObjects;
@@ -76,7 +77,7 @@ public final class AccountManager implements Runnable {
     @NotNull
     public ResultType auth(@NotNull final GameClient client, @NotNull final String name, @NotNull final String password) {
 
-        final LocalObjects local = LocalObjects.get();
+        final LocalObjects local = localObjects();
         final String lowerName = name.toLowerCase();
         final AccountDBManager dbManager = AccountDBManager.getInstance();
 

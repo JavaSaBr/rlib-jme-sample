@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
  *
  * @author JavaSaBr
  */
-public abstract class ObjectTemplateClientPacket extends ClientPacket {
+public abstract class RequestObjectTemplateClientPacket extends ClientPacket {
 
     /**
      * The template id.

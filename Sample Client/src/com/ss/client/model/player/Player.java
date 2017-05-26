@@ -14,8 +14,6 @@ import rlib.util.array.ArrayFactory;
  */
 public class Player extends AbstractSpawnableObject<EmptyPlayerTemplate> {
 
-    public static final int CLASS_ID = 1;
-
     /**
      * The list of available vehicles.
      */

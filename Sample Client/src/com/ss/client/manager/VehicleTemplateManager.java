@@ -1,7 +1,7 @@
 package com.ss.client.manager;
 
 import com.ss.client.network.Network;
-import com.ss.client.network.client.PlayerVehicleTemplateClientPacket;
+import com.ss.client.network.client.RequestPlayerVehicleTemplateClientPacket;
 import com.ss.client.template.NpcVehicleTemplate;
 import com.ss.client.template.PlayerVehicleTemplate;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +72,7 @@ public class VehicleTemplateManager {
 
             if (!playerTemplates.containsKey(templateId)) {
                 final Network network = Network.getInstance();
-                network.sendPacketToGameServer(PlayerVehicleTemplateClientPacket.getInstance(templateId));
+                network.sendPacketToGameServer(RequestPlayerVehicleTemplateClientPacket.getInstance(templateId));
             }
 
             while (!playerTemplates.containsKey(templateId)) {
