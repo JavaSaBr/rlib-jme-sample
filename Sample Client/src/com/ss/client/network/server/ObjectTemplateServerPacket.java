@@ -36,13 +36,13 @@ public abstract class ObjectTemplateServerPacket<T extends ObjectTemplate> exten
         template.readFrom(this, buffer);
 
         this.template = template;
+        this.templateId = templateId;
     }
 
     protected abstract T createTemplate(final int templateId);
 
     @Override
     protected void runImpl() {
-
     }
 
     /**

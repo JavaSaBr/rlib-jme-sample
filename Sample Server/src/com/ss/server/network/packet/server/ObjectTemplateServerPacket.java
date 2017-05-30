@@ -28,9 +28,11 @@ public abstract class ObjectTemplateServerPacket<T extends ObjectTemplate> exten
     @Override
     protected void writeImpl(@NotNull final ByteBuffer buffer) {
         super.writeImpl(buffer);
+
         final T template = getTemplate();
         writeInt(buffer, getTemplateId());
         writeByte(buffer, template == null ? 0 : 1);
+
         if (template != null) {
             template.writeTo(this, buffer);
         }

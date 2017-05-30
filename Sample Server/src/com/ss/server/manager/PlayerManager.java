@@ -76,4 +76,30 @@ public class PlayerManager {
 
         return player;
     }
+
+    /**
+     * Load a player of the account.
+     *
+     * @param account the account.
+     * @param local  the container of local objects.
+     * @return the loaded player or null.
+     */
+    @Nullable
+    public Player loadPlayer(@NotNull final Account account, @NotNull final LocalObjects local) {
+
+        final PlayerDBManager playerDBManager = PlayerDBManager.getInstance();
+        final PlayerVehicleDBManager vehicleDBManager = PlayerVehicleDBManager.getInstance();
+
+        final Player player = playerDBManager.load(account);
+        if (player == null) return null;
+
+        vehicleDBManager.loadAvailableVehicles(player, local);
+
+        if (player.getCurrentVehicle() == null) {
+            player.deleteMe(local);
+            return null;
+        }
+
+        return player;
+    }
 }

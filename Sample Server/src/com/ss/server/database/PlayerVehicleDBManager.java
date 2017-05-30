@@ -1,17 +1,22 @@
 package com.ss.server.database;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import com.ss.server.LocalObjects;
 import com.ss.server.database.sql.provider.SqlProvider;
 import com.ss.server.manager.DataBaseManager;
+import com.ss.server.manager.VehicleTemplateManager;
+import com.ss.server.model.impl.AbstractSpawnableObject;
 import com.ss.server.model.player.Player;
 import com.ss.server.model.player.PlayerVehicle;
 import com.ss.server.template.PlayerVehicleTemplate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.database.ConnectFactory;
 import rlib.database.DBUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
+import rlib.util.array.Array;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -90,9 +95,7 @@ public class PlayerVehicleDBManager implements DbTables {
 
             final int id = rset.getInt(1);
 
-            final PlayerVehicle vehicle = template.takeInstance(PlayerVehicle.class, id);
-
-            return vehicle;
+            return template.takeInstance(id);
 
         } catch (final SQLException e) {
             LOGGER.warning(e);
@@ -101,5 +104,72 @@ public class PlayerVehicleDBManager implements DbTables {
         }
 
         return null;
+    }
+
+    /**
+     * Load available player vehicles of the player.
+     *
+     * @param player the player.
+     * @param local  the container of local objects.
+     */
+    public void loadAvailableVehicles(@NotNull final Player player, @NotNull final LocalObjects local) {
+
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rset = null;
+
+        try {
+
+            con = connectFactory.getConnection();
+
+            statement = con.prepareStatement(sqlProvider.selectPlayerVehicleByPlayerQuery(), RETURN_GENERATED_KEYS);
+            statement.setInt(1, player.getObjectId());
+
+            rset = statement.executeQuery();
+
+            final VehicleTemplateManager templateManager = VehicleTemplateManager.getInstance();
+
+            final AsyncReadSyncWriteLock lock = player.getLock();
+            lock.syncLock();
+            try {
+
+                final Array<PlayerVehicle> vehicles = player.getAvailableVehicles();
+
+                while (rset.next()) {
+
+                    final int objectId = rset.getInt(1);
+                    final int templateId = rset.getInt(2);
+
+                    final PlayerVehicleTemplate template = templateManager.getPlayerTemplate(templateId);
+
+                    if (template == null) {
+                        LOGGER.warning("not found template for template id " + templateId);
+                        continue;
+                    }
+
+                    final PlayerVehicle vehicle = template.takeInstance(objectId);
+
+                    vehicles.add(vehicle);
+
+                    if (player.getCurrentVehicleId() == objectId) {
+                        player.setCurrentVehicle(vehicle);
+                    }
+                }
+
+                if (player.getCurrentVehicle() == null) {
+                    LOGGER.warning("not found current vehicle.");
+                    vehicles.forEach(local, AbstractSpawnableObject::deleteMe);
+                    vehicles.clear();
+                }
+
+            } finally {
+                lock.syncUnlock();
+            }
+
+        } catch (final SQLException e) {
+            LOGGER.warning(e);
+        } finally {
+            DBUtils.close(con, statement, rset);
+        }
     }
 }

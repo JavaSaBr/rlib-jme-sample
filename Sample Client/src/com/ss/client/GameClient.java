@@ -16,10 +16,7 @@ import com.ss.client.config.GameConfig;
 import com.ss.client.config.ScreenSize;
 import com.ss.client.executor.impl.GameThreadExecutor;
 import com.ss.client.game.task.SwitchStateTask;
-import com.ss.client.manager.ClassManager;
-import com.ss.client.manager.ExecutorManager;
-import com.ss.client.manager.GameTaskManager;
-import com.ss.client.manager.UpdateObjectManager;
+import com.ss.client.manager.*;
 import com.ss.client.model.impl.UserAccount;
 import com.ss.client.network.Network;
 import com.ss.client.stage.StageType;
@@ -341,6 +338,7 @@ public class GameClient extends SimpleApplication {
 
         InitializeManager.register(GameTaskManager.class);
         InitializeManager.register(UpdateObjectManager.class);
+        InitializeManager.register(VehicleTemplateManager.class);
         InitializeManager.register(ClassManager.class);
         InitializeManager.register(Network.class);
         InitializeManager.initialize();

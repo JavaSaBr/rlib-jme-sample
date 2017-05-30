@@ -24,6 +24,11 @@ public class MySQLSqlProvider implements SqlProvider {
                     AccountTable.TABLE_NAME + "` WHERE `" + AccountTable.NAME + "` = ? LIMIT 1";
 
     @NotNull
+    static final String SELECT_PLAYER_BY_ACCOUNT =
+            "SELECT `" + PlayerTable.ID + "`, `" + PlayerTable.CURRENT_VEHICLE_ID + "` FROM `" +
+                    PlayerTable.TABLE_NAME + "` WHERE `" + PlayerTable.ACCOUNT_ID + "` = ? LIMIT 1";
+
+    @NotNull
     static final String INSERT_PLAYER =
             "INSERT INTO `" + PlayerTable.TABLE_NAME + "` (`" + PlayerTable.ACCOUNT_ID + "`) VALUES (?)";
 
@@ -40,6 +45,12 @@ public class MySQLSqlProvider implements SqlProvider {
     static final String INSERT_PLAYER_VEHICLE =
             "INSERT INTO `" + PlayerVehicleTable.TABLE_NAME + "` (`" + PlayerVehicleTable.PLAYER_ID + "`, `" +
                     PlayerVehicleTable.TEMPLATE_ID + "`) VALUES (?,?)";
+
+    @NotNull
+    static final String SELECT_PLAYER_VEHICLES_BY_PLAYER =
+            "SELECT `" + PlayerVehicleTable.ID + "`, `" + PlayerVehicleTable.TEMPLATE_ID + "` FROM `" +
+                    PlayerVehicleTable.TABLE_NAME + "` WHERE `" + PlayerVehicleTable.PLAYER_ID + "` = ?";
+
 
     @NotNull
     @Override
@@ -61,6 +72,12 @@ public class MySQLSqlProvider implements SqlProvider {
 
     @NotNull
     @Override
+    public String selectPlayerByAccountQuery() {
+        return SELECT_PLAYER_BY_ACCOUNT;
+    }
+
+    @NotNull
+    @Override
     public String updatePlayerCurrentVehicleQuery() {
         return UPDATE_PLAYER_CURRENT_VEHICLE;
     }
@@ -75,5 +92,11 @@ public class MySQLSqlProvider implements SqlProvider {
     @Override
     public String insertPlayerVehicleQuery() {
         return INSERT_PLAYER_VEHICLE;
+    }
+
+    @NotNull
+    @Override
+    public String selectPlayerVehicleByPlayerQuery() {
+        return SELECT_PLAYER_VEHICLES_BY_PLAYER;
     }
 }

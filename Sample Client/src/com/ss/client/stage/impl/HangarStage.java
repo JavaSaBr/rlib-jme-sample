@@ -3,6 +3,8 @@ package com.ss.client.stage.impl;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
+import com.ss.client.network.Network;
+import com.ss.client.network.client.RequestHangarInfoClientPacket;
 import com.ss.client.ui.scene.UISceneType;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
  * @author JavaSaBr
  */
 public class HangarStage extends AbstractStage {
+
+    @NotNull
+    private static final Network NETWORK = Network.getInstance();
 
     /**
      * The scene node.
@@ -35,6 +40,8 @@ public class HangarStage extends AbstractStage {
 
         final Node rootNode = GAME_CLIENT.getRootNode();
         rootNode.attachChild(scene);
+
+        NETWORK.sendPacketToGameServer(RequestHangarInfoClientPacket.getInstance());
     }
 
     @Override

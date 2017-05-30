@@ -2,6 +2,7 @@ package com.ss.server.template;
 
 import static java.util.Objects.requireNonNull;
 import static rlib.util.ClassUtils.getConstructor;
+import static rlib.util.ClassUtils.unsafeCast;
 import com.ss.server.model.GameObject;
 import com.ss.server.network.ServerPacket;
 import com.ss.server.template.view.ViewInfo;
@@ -109,12 +110,23 @@ public abstract class ObjectTemplate {
      * @return the new instance.
      */
     @NotNull
-    public <T extends GameObject> T takeInstance(@NotNull final Class<T> type, final int objectId) {
+    protected <T extends GameObject> T takeInstance(@NotNull final Class<T> type, final int objectId) {
 
         final T object = type.cast(instancePool.take(constructor, this, Function::apply));
         object.setObjectId(objectId);
 
         return object;
+    }
+
+    /**
+     * Take a new instance of this template.
+     *
+     * @param objectId the object id.
+     * @return the new instance.
+     */
+    @NotNull
+    public <T extends GameObject> T takeInstance(final int objectId) {
+        return takeInstance(unsafeCast(getInstanceClass()), objectId);
     }
 
     /**

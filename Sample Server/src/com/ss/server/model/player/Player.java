@@ -38,6 +38,11 @@ public class Player extends AbstractSpawnableObject<EmptyPlayerTemplate> {
     private volatile PlayerVehicle currentVehicle;
 
     /**
+     * The current vehicle id.
+     */
+    private volatile int currentVehicleId;
+
+    /**
      * @param template the template.
      */
     public Player(@NotNull final EmptyPlayerTemplate template) {
@@ -95,11 +100,26 @@ public class Player extends AbstractSpawnableObject<EmptyPlayerTemplate> {
      */
     public void setCurrentVehicle(@Nullable final PlayerVehicle currentVehicle) {
         this.currentVehicle = currentVehicle;
+        this.currentVehicleId = currentVehicle == null ? 0 : currentVehicle.getObjectId();
+    }
+
+    /**
+     * @param currentVehicleId the current vehicle id.
+     */
+    public void setCurrentVehicleId(final int currentVehicleId) {
+        this.currentVehicleId = currentVehicleId;
     }
 
     @NotNull
     public Array<PlayerVehicle> getAvailableVehicles() {
         return availableVehicles;
+    }
+
+    /**
+     * @return the current vehicle id.
+     */
+    public int getCurrentVehicleId() {
+        return currentVehicleId;
     }
 
     /**

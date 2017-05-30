@@ -87,7 +87,52 @@ public class PlayerDBManager implements DbTables {
             final int id = rset.getInt(1);
 
             final EmptyPlayerTemplate template = EmptyPlayerTemplate.getInstance();
-            return template.takeInstance(Player.class, id);
+            return template.takeInstance(id);
+
+        } catch (final SQLException e) {
+            LOGGER.warning(e);
+        } finally {
+            DBUtils.close(con, statement, rset);
+        }
+
+        return null;
+    }
+
+    /**
+     * Load a player of the account.
+     *
+     * @param account the account.
+     * @return the loaded player or null.
+     */
+    @Nullable
+    public Player load(@NotNull final Account account) {
+
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rset = null;
+
+        try {
+
+            con = connectFactory.getConnection();
+
+            statement = con.prepareStatement(sqlProvider.selectPlayerByAccountQuery());
+            statement.setInt(1, account.getId());
+
+            rset = statement.executeQuery();
+
+            if (!rset.next()) {
+                LOGGER.warning("Can't load a player of the " + account.getName());
+                return null;
+            }
+
+            final int objectId = rset.getInt(1);
+            final int currentVehicleId = rset.getInt(2);
+
+            final EmptyPlayerTemplate template = EmptyPlayerTemplate.getInstance();
+            final Player player = template.takeInstance(objectId);
+            player.setCurrentVehicleId(currentVehicleId);
+
+            return player;
 
         } catch (final SQLException e) {
             LOGGER.warning(e);

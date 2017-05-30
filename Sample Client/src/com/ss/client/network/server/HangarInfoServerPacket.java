@@ -16,6 +16,7 @@ import rlib.network.packet.ReadablePacketType;
 import rlib.util.array.Array;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * The packet to receive data about hangar information.
@@ -29,42 +30,22 @@ public class HangarInfoServerPacket extends ServerPacket {
             new ReadablePacketType<>(new HangarInfoServerPacket(), 4);
 
     /**
-     * The current player.
+     * The received data.
      */
-    @Nullable
-    private volatile Player player;
+    @NotNull
+    private final ByteBuffer data;
+
+    public HangarInfoServerPacket() {
+        this.data = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
+    }
 
     @Override
     protected void readImpl(@NotNull final ByteBuffer buffer) {
         super.readImpl(buffer);
 
-        final EmptyPlayerTemplate playerTemplate = EmptyPlayerTemplate.getInstance();
-        final Player player = playerTemplate.takeInstance(Player.class, readLong(buffer));
-        final PlayerVehicle currentVehicle = readVehicle(buffer);
-
-        if(currentVehicle == null) {
-            player.deleteMe(localObjects());
-            return;
-        }
-
-        final Array<PlayerVehicle> availableVehicles = player.getAvailableVehicles();
-        availableVehicles.add(currentVehicle);
-
-        final int otherVehicles = readByte(buffer);
-
-        for(int i = 0; i < otherVehicles; i++) {
-
-            final PlayerVehicle vehicle = readVehicle(buffer);
-
-            if(vehicle == null) {
-                player.deleteMe(localObjects());
-                return;
-            }
-
-            availableVehicles.add(vehicle);
-        }
-
-        player.setCurrentVehicle(currentVehicle);
+        data.clear();
+        data.put(buffer);
+        data.flip();
     }
 
     @Nullable
@@ -81,11 +62,45 @@ public class HangarInfoServerPacket extends ServerPacket {
             return null;
         }
 
-        return vehicleTemplate.takeInstance(PlayerVehicle.class, objectId);
+        return vehicleTemplate.takeInstance(objectId);
+    }
+
+    @Override
+    public boolean isSynchronized() {
+        return true;
     }
 
     @Override
     protected void runImpl() {
+
+        final EmptyPlayerTemplate playerTemplate = EmptyPlayerTemplate.getInstance();
+        final Player player = playerTemplate.takeInstance(readLong(data));
+        final PlayerVehicle currentVehicle = readVehicle(data);
+
+        if(currentVehicle == null) {
+            player.deleteMe(localObjects());
+            return;
+        }
+
+        final Array<PlayerVehicle> availableVehicles = player.getAvailableVehicles();
+        availableVehicles.add(currentVehicle);
+
+        final int otherVehicles = readByte(data);
+
+        for(int i = 0; i < otherVehicles; i++) {
+
+            final PlayerVehicle vehicle = readVehicle(data);
+
+            if(vehicle == null) {
+                player.deleteMe(localObjects());
+                return;
+            }
+
+            availableVehicles.add(vehicle);
+        }
+
+        player.setCurrentVehicle(currentVehicle);
+
         FX_EVENT_MANAGER.notify(LoadedHangarEvent.newInstance(requireNonNull(player)));
     }
 
@@ -93,10 +108,5 @@ public class HangarInfoServerPacket extends ServerPacket {
     @Override
     public ReadablePacketType<? extends ReadablePacket> getPacketType() {
         return HANGAR_INFO_TYPE;
-    }
-
-    @Override
-    public void free() {
-        player = null;
     }
 }

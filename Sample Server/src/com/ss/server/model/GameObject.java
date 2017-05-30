@@ -90,6 +90,19 @@ public interface GameObject extends Reusable {
     }
 
     /**
+     * Send the packet to this object.
+     *
+     * @param packet the packet.
+     * @param local  the local objects.
+     * @param increaseSend true if need to increase send counter of the packet.
+     */
+    default void sendPacket(@NotNull final ServerPacket packet, @NotNull final LocalObjects local,
+                            final boolean increaseSend) {
+        if (increaseSend) packet.increaseSends();
+        sendPacket(packet, local);
+    }
+
+    /**
      * Send the packet to all objects exclude this object.
      *
      * @param packet the packet.

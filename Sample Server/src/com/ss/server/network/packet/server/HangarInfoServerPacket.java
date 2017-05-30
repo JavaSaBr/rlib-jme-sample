@@ -4,12 +4,12 @@ import static java.util.Objects.requireNonNull;
 import com.ss.server.model.player.Player;
 import com.ss.server.model.player.PlayerVehicle;
 import com.ss.server.network.ServerPacket;
-import com.ss.server.template.ObjectTemplate;
 import org.jetbrains.annotations.NotNull;
 import rlib.network.packet.SendablePacketType;
 import rlib.util.array.Array;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * The packet with data about hangar state of a player.
@@ -35,7 +35,6 @@ public class HangarInfoServerPacket extends ServerPacket {
         final ByteBuffer data = packet.data;
         try {
 
-            final ObjectTemplate playerTemplate = player.getTemplate();
             final PlayerVehicle currentVehicle = requireNonNull(player.getCurrentVehicle());
 
             packet.writeInt(data, player.getObjectId());
@@ -74,14 +73,14 @@ public class HangarInfoServerPacket extends ServerPacket {
     private final ByteBuffer data;
 
     public HangarInfoServerPacket() {
-        this.data = ByteBuffer.allocate(1024);
+        this.data = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
         this.data.clear();
     }
 
     @Override
     protected void writeImpl(@NotNull final ByteBuffer buffer) {
         super.writeImpl(buffer);
-        writeBuffer(data, buffer);
+        writeBuffer(buffer, data);
     }
 
     @NotNull

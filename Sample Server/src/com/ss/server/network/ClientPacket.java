@@ -1,6 +1,7 @@
 package com.ss.server.network;
 
 import com.ss.server.LocalObjects;
+import com.ss.server.model.player.Player;
 import com.ss.server.network.model.GameClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,5 +29,18 @@ public abstract class ClientPacket extends AbstractTaskReadablePacket<LocalObjec
     @Override
     public GameClient getOwner() {
         return (GameClient) super.getOwner();
+    }
+
+    @Nullable
+    protected Player getPlayer() {
+
+        final GameClient owner = getOwner();
+
+        if (owner == null) {
+            LOGGER.warning("not found a client for the packet " + this);
+            return null;
+        }
+
+        return owner.getOwner();
     }
 }

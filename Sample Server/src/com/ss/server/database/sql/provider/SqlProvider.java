@@ -19,6 +19,7 @@ public interface SqlProvider {
 
     /**
      * Params: 1 - account name.
+     * Returns: 1 - id, 2 - name, 3 - password.
      *
      * @return the query to select account by account name.
      */
@@ -32,6 +33,15 @@ public interface SqlProvider {
      */
     @NotNull
     String insertPlayerQuery();
+
+    /**
+     * Params: 1 - account id.
+     * Returns: 1 - object id, 2 - current vehicle id.
+     *
+     * @return the query to select a player.
+     */
+    @NotNull
+    String selectPlayerByAccountQuery();
 
     /**
      * Params: 1 - vehicle id, 2 - object id.
@@ -56,4 +66,13 @@ public interface SqlProvider {
      */
     @NotNull
     String insertPlayerVehicleQuery();
+
+    /**
+     * Params: 1 - player id.
+     * Returns: 1 - object id, 2 - template id.
+     *
+     * @return the query to select player vehicles a player.
+     */
+    @NotNull
+    String selectPlayerVehicleByPlayerQuery();
 }
